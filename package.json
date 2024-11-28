@@ -1,0 +1,42 @@
+{
+  "name": "iptvplayer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "tauri": "tauri",
+    "tauri:build": "tauri build",
+    "tauri:build-debug": "tauri build --debug",
+    "tauri:dev": "tauri dev",
+    "serve": "vite preview",
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.6.0",
+    "@tauri-apps/api": "^2.0.2",
+    "@tauri-apps/plugin-dialog": "^2.0.0",
+    "@tauri-apps/plugin-fs": "^2.0.0",
+    "@tauri-apps/plugin-http": "^2.0.0",
+    "@tauri-apps/plugin-sql": "^2.0.0",
+    "axios": "^1.7.7",
+    "element-plus": "^2.8.4",
+    "hls.js": "^1.5.17",
+    "m3u8-parser": "^7.2.0",
+    "pinia": "^2.2.4",
+    "prettier": "^3.4.1",
+    "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0-rc.18",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "sass-embedded": "^1.79.5",
+    "tailwindcss": "^3.4.13",
+    "vite": "^6.0.0"
+  }
+}
