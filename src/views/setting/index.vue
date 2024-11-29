@@ -22,19 +22,20 @@
       </div>
     </el-card>
 
-    <el-card title="EPG 订阅地址">
+    <el-card title="EPG 订阅地址" class="mt-3">
       <div class="flex gap-2">
         <el-input v-model="settingReactive.epgInputValue" placeholder="请输入 EPG URL"></el-input>
         <el-button type="primary" @click="settingReactive.addToEpgList">添加</el-button>
       </div>
       <div class="flex flex-col mt-3">
-        <div class="flex gap-2 items-center w-100" v-for="(item,index) in settingReactive.m3uUrlList">
+        <div class="flex gap-2 items-center w-100" v-for="(item,index) in settingReactive.epgUrlList">
           <div :title="item" class="flex-1 truncate">{{ item }}</div>
-          <el-button size="small" type="success"
+          <el-button size="small"
+                     type="success"
                      @click="settingReactive.downloadUrl(item,'epg')">刷新
           </el-button>
           <el-button size="small" type="danger"
-                     @click="settingReactive.deleteItem(index, settingReactive.m3uUrlList)">删除
+                     @click="settingReactive.deleteItem(index, settingReactive.epgUrlList)">删除
           </el-button>
         </div>
       </div>

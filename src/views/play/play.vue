@@ -5,9 +5,8 @@
          @mousemove="controls.resetTimer"
          @mouseleave="controls.stopHoverState">
       <video v-if="video.show" ref="videoPlayer" autoplay></video>
-      <!--      :class="{ 'hide': !controls.isHovering }"-->
       <div class="video-area-controls absolute top-0 bottom-0 left-0 right-0"
-
+           :class="{ 'hide': !controls.isHovering }"
            v-if="video.checkItem.name">
         <div class="controls-top height-[85px] top-0 absolute p-3 flex flex-nowrap justify-between items-center">
           <div class="flex items-center gap-3">
