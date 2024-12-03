@@ -19,31 +19,46 @@
 - 跨平台桌面应用
 - 响应式设计
 
+## 预想功能
+
+- [x] 能添加单个频道
+- [x] 频道能分组
+- [ ] 能同时播放多个频道
+- [ ] 能全屏播放，且在全屏播放下有界面
+- [ ] 特定的台如果源有问题直接访问网站来播放
+- [ ] 添加源的有效性检测
+- [ ] 界面更好看
+
 ## 开源致谢
 
 感谢以下开源项目和库的贡献：
 
 ### 框架和开发工具
+
 - [Tauri](https://tauri.app/) - 使用 Web 前端构建轻量级跨平台桌面应用
 - [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
 - [Vite](https://vitejs.dev/) - 高性能前端构建工具
 - [Pinia](https://pinia.vuejs.org/) - Vue 状态管理库
 
 ### UI 和样式
+
 - [Element Plus](https://element-plus.org/) - Vue 3 组件库
 - [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架
 - [Font Awesome](https://fontawesome.com/) - 图标库
 
 ### 媒体处理
+
 - [hls.js](https://github.com/video-dev/hls.js) - HLS 流媒体播放库
 - [m3u8-parser](https://github.com/videojs/m3u8-parser) - M3U8 解析工具
 - [epg-parser](https://github.com/freearhey/epg-parser) - EPG 数据解析库
 
 ### 网络和数据请求
+
 - [Axios](https://axios-http.com/) - 基于 Promise 的 HTTP 客户端
 - [Reqwest](https://github.com/seanmonstar/reqwest) - Rust HTTP 客户端
 
 ### 开发和构建工具
+
 - [Rust](https://www.rust-lang.org/) - 系统编程语言
 - [PostCSS](https://postcss.org/) - CSS 转换工具
 - [Sass](https://sass-lang.com/) - CSS 预处理器
@@ -55,6 +70,7 @@
 ## 特别感谢
 
 在前期不熟练的开发中，碰到的坑，感谢他们帮我解决
+
 - [目棃](https://github.com/BTMuli)
 - [Goodjooy](https://github.com/Goodjooy)
 
