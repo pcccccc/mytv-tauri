@@ -56,6 +56,7 @@
 
 在前期不熟练的开发中，碰到的坑，感谢他们帮我解决
 - [目棃](https://github.com/BTMuli)
+- [Goodjooy](https://github.com/Goodjooy)
 
 ## 许可证
 
