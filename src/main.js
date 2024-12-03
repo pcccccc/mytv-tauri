@@ -11,7 +11,7 @@ import useSettingStore from '@/store/modules/setting'
 
 const app = createApp(App);
 app.use(ElementPlus).use(router).use(store);
-useSettingStore().setConfigJs().then(res => {
-    app.mount('#app')
-})
+useSettingStore().setConfigJs();
+await useSettingStore().getSetting();
+app.mount('#app')
 

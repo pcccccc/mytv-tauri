@@ -39,6 +39,11 @@ export const constantRoutes = [
         component: () => import('@/views/play/play.vue'),
     },
     {
+        path: '/channels',
+        name: 'Channels',
+        component: () => import('@/views/play/channels.vue'),
+    },
+    {
         path: '/setting',
         name: 'Setting',
         component: () => import('@/views/setting/index.vue'),

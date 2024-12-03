@@ -20,6 +20,7 @@ const useM3uStore = defineStore('m3u', {
                     m3uList.push(...this.parseM3U8Text(m3uFileText));
                 }
                 this.m3uList = m3uList;
+                return m3uList;
             }
         },
         parseM3U8Text(m3u8Text) {

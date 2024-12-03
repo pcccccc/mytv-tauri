@@ -60,31 +60,16 @@
         </div>
       </div>
     </div>
-    <div class="tv-tag-area overflow-auto flex flex-wrap gap-3 justify-center w100 mt-5">
-      <div v-for="item in m3uInfo.list"
-           class="tv-tag flex justify-between gap-3 p-2 rounded-md cursor-pointer"
-           :class="{'isPlay':item.uri == video.checkItem.uri}"
-           @click="m3uInfo.checkItem(item)">
-        <el-image v-if="item.tvgLogo" :src="item.tvgLogo" class="tv-tag-image p-1" fit="contain">
-          <template #error>
-            ??
-          </template>
-        </el-image>
-        <div class="truncate flex-1 justify-start flex items-center text-white" :title="item.name">{{ item.name }}</div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
 import {onMounted, reactive, ref} from 'vue';
 import Hls from 'hls.js';
-import useM3uStore from "@/store/modules/m3u.js";
 import {ElMessage} from "element-plus";
 import {formatNowTime, getWeekDay} from "@/common/time.js";
 import {determineIPType} from "@/common/index.js";
 
-const m3uStore = useM3uStore();
 const videoPlayer = ref(null);
 const controls = reactive({
   hoverTimer: null,
@@ -290,25 +275,7 @@ const video = reactive({
     }
   },
 });
-const m3uInfo = reactive({
-  list: [],
-  async getList() {
-    await m3uStore.getM3uList();
-    m3uInfo.list = m3uStore.m3uList
-  },
-  checkItem(item) {
-    video.checkItem = item
-    video.loadURL(item.uri)
-  }
-})
-const epgInfo = reactive({
-  checkItem: {},
-  list: [],
-  async getList() {
-    await m3uStore.getM3uList();
-    m3uInfo.list = m3uStore.m3uList
-  },
-})
+
 const getNowTime = reactive({
   time: formatNowTime(),
   date: formatNowTime('MM-dd'),
@@ -322,7 +289,6 @@ const getNowTime = reactive({
   }
 })
 onMounted(() => {
-  m3uInfo.getList();
   video.init();
   getNowTime.start();
 });
@@ -365,27 +331,6 @@ onMounted(() => {
     }
   }
 
-  .tv-tag-area {
-    height: 200px;
-
-    .tv-tag {
-      background: #B2B2B2;
-      height: 60px;
-      width: 200px;
-      transition: all 0.5s;
-
-      &.isPlay {
-        background: #4C4C4C;
-      }
-
-      .tv-tag-image {
-        width: 70px;
-      }
-
-      .tv-tag-title {
-      }
-    }
-  }
 
 }
 </style>

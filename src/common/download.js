@@ -1,21 +1,24 @@
-import axios from "axios";
 import {BaseDirectory, writeFile, exists, mkdir} from "@tauri-apps/plugin-fs";
+import {fetch} from "@tauri-apps/plugin-http";
 
 export async function downloadFile(downloadUrl, downloadPath = "download") {
     try {
         // 定义文件的下载 URL 和保存文件名
         const url = downloadUrl; // 替换为你的文件 URL
-        const fileName = url.split("/").pop() || `default-file-name-${new Date().getTime()}`;
+        const fileName = (url.split('/').pop()?.split('?')[0]) || `default-file-name-${new Date().getTime()}`;
         let isExists = await exists(`${downloadPath}/`, {baseDir: BaseDirectory.Resource})
         if (!isExists) {
             await mkdir(downloadPath, {baseDir: BaseDirectory.Resource})
         }
-        // 使用 axios 下载文件，设置 responseType 为 "arraybuffer"
-        const response = await axios.get(url, {responseType: "arraybuffer"});
+        const response = await fetch(url, {method: "GET", connectTimeout: 5000});
 
         if (response.status === 200) {
             // 将文件数据保存到 BaseDirectory.Resource
-            await writeFile(`${downloadPath}/${fileName}`, new Uint8Array(response.data), {
+            const data = await response.text()
+            const encoder = new TextEncoder()
+            const filePayload = encoder.encode(data)
+
+            await writeFile(`${downloadPath}/${fileName}`, filePayload, {
                 baseDir: BaseDirectory.Resource,
             });
             return {code: 'success', message: `文件已成功下载并保存到 Resource 目录：${fileName}`}

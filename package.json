@@ -22,6 +22,7 @@
     "@tauri-apps/plugin-sql": "^2.0.0",
     "axios": "^1.7.7",
     "element-plus": "^2.8.4",
+    "epg-parser": "^0.3.1",
     "hls.js": "^1.5.17",
     "m3u8-parser": "^7.2.0",
     "pinia": "^2.2.4",
