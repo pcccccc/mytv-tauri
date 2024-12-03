@@ -1,21 +1,21 @@
 <template>
-  <div class="epg-list flex flex-col text-xs p-1" v-if="epg.now">
-    <div :title="epg.now.title" class="peg-list-now px-1 py-1 truncate rounded-md p-1">
-      正在播放：{{ epg.now.title }}
+  <div class="epg-list flex flex-col text-xs p-1" v-if="epgReactive.now || epgReactive.next">
+    <div :title="epgReactive.now?.title" class="peg-list-now px-1 py-1 truncate rounded-md p-1">
+      正在播放：{{ epgReactive.now?.title || '未解析到节目' }}
     </div>
-    <div :title="epg.now.title" class="peg-list-next px-1 py-1 truncate rounded-md p-1">
-      即将播放：{{ epg.next.title }}
+    <div :title="epgReactive.now?.title" class="peg-list-next px-1 py-1 truncate rounded-md p-1">
+      即将播放：{{ epgReactive.next.title || '未解析到节目' }}
     </div>
-    <div class="w100 text-right cursor-pointer" @click="epg.showAllEpg">查看全部节目单</div>
-    <el-dialog title="全部节目" v-model="epg.isShowAllEpg" align-center destroy-on-close>
+    <div class="w100 text-right cursor-pointer" @click="epgReactive.showAllEpg">查看全部节目单</div>
+    <el-dialog :title="title+' 全部节目'" v-model="epgReactive.isShowAllEpg" align-center destroy-on-close>
       <div class="flex flex-col gap-3 all-epg-dialog">
-        <div v-for="item in epg.epgList" class="p-3 all-epg-item rounded-md text-white"
+        <div v-for="item in epgReactive.epgList" class="p-3 all-epg-item rounded-md text-white"
              :class="{'now-playing':item.status == 0}">
           <div class="flex items-center justify-between">
             <el-tag type="warning" v-if="item.status == -1">已播放</el-tag>
             <el-tag type="success" v-if="item.status == 0">播放中</el-tag>
             <el-tag v-if="item.status == 1">未开始</el-tag>
-            <div>{{ item.start }}</div>
+            <div>播出时间：{{ item.start }}</div>
           </div>
           <div class="mt-2">{{ item.title }}</div>
         </div>
@@ -31,15 +31,15 @@
 import {nextTick, onMounted, reactive} from 'vue';
 import {currentAndNextProgram, markProgramStatus} from '@/common/epg.js';
 
-let props = defineProps(['epg']);
-let epg = reactive({
+let props = defineProps(['epg', 'title']);
+let epgReactive = reactive({
   now: {},
   next: {},
   epgList: [],
   isShowAllEpg: false,
   showAllEpg() {
-    epg.epgList = markProgramStatus(props.epg);
-    this.isShowAllEpg = true;
+    epgReactive.epgList = markProgramStatus(props.epg);
+    epgReactive.isShowAllEpg = true;
     nextTick(() => {
       const nowPlayingElement = document.querySelector('.now-playing');
       if (nowPlayingElement) {
@@ -49,12 +49,12 @@ let epg = reactive({
   },
   currentAndNextProgram() {
     let currentAndNextProgramList = currentAndNextProgram(props.epg);
-    epg.now = currentAndNextProgramList.now;
-    epg.next = currentAndNextProgramList.next;
+    epgReactive.now = currentAndNextProgramList.now;
+    epgReactive.next = currentAndNextProgramList.next;
   },
 });
 onMounted(() => {
-  epg.currentAndNextProgram();
+  epgReactive.currentAndNextProgram();
 });
 </script>
 

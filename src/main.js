@@ -13,5 +13,6 @@ const app = createApp(App);
 app.use(ElementPlus).use(router).use(store);
 useSettingStore().setConfigJs();
 await useSettingStore().getSetting();
+useSettingStore().reloadEpgFiles();
 app.mount('#app')
 

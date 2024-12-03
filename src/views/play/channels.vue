@@ -12,16 +12,30 @@
                    width="100"
                    @change="channels.changeShowFavorite"
                    v-model="channels.showFavorite"></el-switch>
+        <el-switch active-text="按文件分组"
+                   inactive-text="不分组"
+                   inline-prompt
+                   width="100"
+                   @change="channels.changeGroupByFile"
+                   v-model="channels.isGroupByFile"></el-switch>
       </div>
     </div>
-    <div class="tv-tag-area overflow-auto grid grid-cols-3 flex-wrap gap-3 justify-around w100 mt-5">
-      <div v-for="item in m3uInfo.list"
+    <el-tabs v-if="channels.isGroupByFile"
+             v-model="channels.checkGroup"
+             @tab-change="channels.changeShowList"
+             type="card">
+      <el-tab-pane v-for="item in channels.groupFileNameList" :label="item" :name="item"></el-tab-pane>
+    </el-tabs>
+    <div class="tv-tag-area overflow-auto grid grid-cols-3 flex-wrap gap-3 justify-around w100 mt-5"
+         :class="{'group':channels.isGroupByFile}">
+      <div v-for="item in m3uInfo.showList"
+           :key="item.tvgId"
            class="tv-tag h-max text-white flex flex-col rounded-md"
            @click="m3uInfo.checkItem(item)">
         <div class="flex justify-between items-center gap-3 p-2  cursor-pointer ">
-          <el-image v-if="item.tvgLogo" :src="item.tvgLogo" class="tv-tag-image p-1" fit="scale-down">
+          <el-image :src="item.tvgLogo||logoURL" class="tv-tag-image" fit="scale-down">
             <template #error>
-              ??
+              <el-image :src="logoURL" class="tv-tag-image" fit="scale-down"></el-image>
             </template>
           </el-image>
           <div class="truncate flex-1 justify-start flex items-center" :title="item.name">{{ item.name }}</div>
@@ -31,7 +45,7 @@
           </div>
         </div>
         <div class="tv-tag-epg">
-          <epg-list :epg="channels.findPrograms(item.tvgId)"></epg-list>
+          <epg-list :epg="channels.findPrograms(item.tvgId)" :title="item.name"></epg-list>
         </div>
       </div>
     </div>
@@ -41,11 +55,12 @@
 <script setup>
 import useEPGStore from '@/store/modules/epg.js';
 import useM3uStore from '@/store/modules/m3u.js';
-import {onMounted, reactive} from 'vue';
+import {computed, onMounted, reactive} from 'vue';
 import router from '@/router/index.js';
 import EpgList from '@/views/play/epgItem.vue';
 import useSettingStore from "@/store/modules/setting.js";
-import setting from "@/store/modules/setting.js";
+
+const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
 
 const m3uStore = useM3uStore();
 const epgStore = useEPGStore();
@@ -53,13 +68,11 @@ const settingStore = useSettingStore();
 
 const m3uInfo = reactive({
   list: [],
+  showList: [],
   async getList() {
-    let list = await m3uStore.getM3uList();
-    if (channels.showFavorite) {
-      m3uInfo.list = list.filter(x => m3uInfo.favoriteList.some(y => y === x.tvgId));
-    } else {
-      m3uInfo.list = list;
-    }
+    await m3uStore.getM3uList();
+    m3uInfo.list = m3uStore.m3uList;
+    // m3uInfo.showList = m3uInfo.list;
   },
   checkItem(item) {
     // todo 打开新的播放窗口播放
@@ -74,8 +87,7 @@ const epgInfo = reactive({
 });
 const channels = reactive({
   findPrograms(name) {
-    let a = epgStore.findPrograms(name);
-    return a;
+    return epgStore.findPrograms(name);
   },
   getFavorite() {
     m3uInfo.favoriteList = settingStore.favoriteList || [];
@@ -91,24 +103,59 @@ const channels = reactive({
   showFavorite: false,
   changeShowFavorite() {
     settingStore.setSetting({showFavorite: channels.showFavorite});
-    m3uInfo.getList();
+    channels.changeShowList();
   },
   getIsShowFavorite() {
     channels.showFavorite = settingStore.showFavorite || false;
+    channels.changeShowList();
+  },
+  isGroupByFile: false,
+  groupFileNameList: computed(() => new Array(...new Set(m3uInfo.list.map(x => x.source)))),
+  checkGroup: null,
+  changeGroupByFile() {
+    settingStore.setSetting({isGroupByFile: channels.isGroupByFile})
+    channels.checkGroup = channels.groupFileNameList[0];
+    channels.changeShowList();
+  },
+  getIsGroupByFile() {
+    channels.isGroupByFile = settingStore.isGroupByFile || false;
+    if (channels.isGroupByFile) {
+      channels.checkGroup = channels.groupFileNameList[0];
+      channels.changeShowList();
+    }
+  },
+  changeShowList() {
+    let showList = [];
+    if (channels.showFavorite) {
+      showList = m3uInfo.list.filter(x => m3uInfo.favoriteList.some(y => y === x.tvgId));
+    } else {
+      showList = m3uInfo.list;
+    }
+    if (channels.isGroupByFile) {
+      showList = showList.filter(x => x.source == channels.checkGroup);
+    }
+    m3uInfo.showList = showList;
   }
 });
 
 onMounted(async () => {
   channels.getFavorite();
-  channels.getIsShowFavorite()
   await epgInfo.getList();
   await m3uInfo.getList();
+  channels.getIsShowFavorite();
+  channels.getIsGroupByFile();
+  channels.changeShowList();
 });
 </script>
 
 <style scoped>
 .tv-tag-area {
   height: calc(100vh - 108px);
+
+  &.group {
+    height: calc(100vh - 144px);
+    margin-top: 0;
+  }
 
   .tv-tag {
     background: #4C4C4C;

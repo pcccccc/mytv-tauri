@@ -1,11 +1,11 @@
-import {BaseDirectory, writeFile, exists, mkdir} from "@tauri-apps/plugin-fs";
+import {BaseDirectory, writeFile, exists, mkdir, readDir, readTextFile} from "@tauri-apps/plugin-fs";
 import {fetch} from "@tauri-apps/plugin-http";
 
-export async function downloadFile(downloadUrl, downloadPath = "download") {
+export async function downloadFile(downloadUrl, downloadPath = "download", fileName) {
     try {
         // 定义文件的下载 URL 和保存文件名
         const url = downloadUrl; // 替换为你的文件 URL
-        const fileName = (url.split('/').pop()?.split('?')[0]) || `default-file-name-${new Date().getTime()}`;
+        fileName = fileName || (url.split('/').pop()?.split('?')[0]) || `default-file-name-${new Date().getTime()}`;
         let isExists = await exists(`${downloadPath}/`, {baseDir: BaseDirectory.Resource})
         if (!isExists) {
             await mkdir(downloadPath, {baseDir: BaseDirectory.Resource})
@@ -21,7 +21,7 @@ export async function downloadFile(downloadUrl, downloadPath = "download") {
             await writeFile(`${downloadPath}/${fileName}`, filePayload, {
                 baseDir: BaseDirectory.Resource,
             });
-            return {code: 'success', message: `文件已成功下载并保存到 Resource 目录：${fileName}`}
+            return {code: 'success', message: `下载成功：${fileName}`}
         } else {
             return {code: 'error', message: `下载失败：状态码 ${response.status}`}
         }
@@ -29,5 +29,4 @@ export async function downloadFile(downloadUrl, downloadPath = "download") {
         return {code: 'error', message: `下载文件时出错:, ${JSON.stringify(error)}`}
     }
 }
-
 

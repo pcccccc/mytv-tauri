@@ -1,6 +1,8 @@
 import {defineStore} from "pinia";
 import {exists, BaseDirectory, readTextFile, create, writeTextFile, open, writeFile} from '@tauri-apps/plugin-fs';
 import Config from "../../../public/config.json"
+import {downloadFile} from "@/common/download.js";
+import {ElMessage, ElNotification} from "element-plus";
 
 const useSettingStore = defineStore('setting', {
     state: () => ({
@@ -27,8 +29,7 @@ const useSettingStore = defineStore('setting', {
             }
             // 添加更新时间
             newData.updateTime = new Date();
-            console.log(newData)
-            await writeTextFile(this.settingFileName, JSON.stringify(newData), {baseDir: BaseDirectory.Resource});
+            await writeTextFile(this.settingFileName, JSON.stringify(newData, null, 2), {baseDir: BaseDirectory.Resource});
         },
         async getSetting() {
             let existsFile = await exists(this.settingFileName, {baseDir: BaseDirectory.Resource});
@@ -44,6 +45,21 @@ const useSettingStore = defineStore('setting', {
                 await writeTextFile(this.settingFileName, JSON.stringify({updateTime}), {baseDir: BaseDirectory.Resource});
                 this["updateTime"] = updateTime
             }
+        },
+        // 重新下载全部的文件
+        reloadEpgFiles() {
+            ElNotification({
+                title: `准备更新EPG文件，共${this.epgUrlList.length}个`,
+                message: '请稍等...',
+            })
+            this.epgUrlList.forEach(item => {
+                downloadFile(item.url, 'epg', item.name).then(res => {
+                    ElMessage({
+                        message: res.message,
+                        type: res.code
+                    });
+                })
+            })
         }
     },
 })
