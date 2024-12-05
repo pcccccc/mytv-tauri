@@ -162,8 +162,8 @@ const settingReactive = reactive({
       settingReactive.saveData();
     }
   },
-  async downloadUrl(url, type, name) {
-    let res = await downloadFile(url, type, name);
+  async downloadUrl(item, type) {
+    let res = await downloadFile(item.url, type, `${item.name}.${type == 'm3u' ? 'm3u' : 'xml'}`);
     ElMessage({
       message: res.message,
       type: res.code
@@ -180,7 +180,7 @@ const settingReactive = reactive({
   m3uCustomList: [],
   addTvgObj: {},
   addToCustomM3u() {
-    if(settingReactive.addTvgObj.tvgId.indexOf('.') !== -1){
+    if (settingReactive.addTvgObj.tvgId.indexOf('.') !== -1) {
       ElMessage({
         message: '频道名称不能包含点号',
         type: 'warning'

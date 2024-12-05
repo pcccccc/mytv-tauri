@@ -1,18 +1,32 @@
 <template>
-  <div class="main">
-    <div @click="btn">去设置</div>
-    <div @click="btn2">去电视列表</div>
-    <div @click="btn3">去播放器</div>
-    <div @click="btn4">打开新的窗口</div>
-    <div @click="btn5">打开新的页面</div>
+  <div class="main flex flex-col justify-center items-center w-full h-[100vh] gap-5 p-3">
+    <div class="text-4xl">悦视</div>
+    <div class="flex gap-3">
+      <el-button @click="btn2">频道</el-button>
+      <el-button @click="btn">设置</el-button>
+    </div>
+    <div class="w-4/5">
+      <el-divider><i class="fa-solid fa-star text-2xl text-yellow-500"></i></el-divider>
+      <div class="w-full">
+
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup name="main">
 import router from "../router/index.js";
-import {useRoute} from "vue-router";
+import EpgList from "@/views/channel/epgItem.vue";
+import {onMounted, reactive} from "vue";
+import useM3uStore from "@/store/modules/m3u.js";
+import useEPGStore from "@/store/modules/epg.js";
+import useSettingStore from "@/store/modules/setting.js";
 
-const route = useRoute()
+const m3uStore = useM3uStore();
+const epgStore = useEPGStore();
+const settingStore = useSettingStore();
+
+
 
 const btn = () => {
   router.push("/setting")
@@ -21,16 +35,21 @@ const btn = () => {
 const btn2 = () => {
   router.push("/channels")
 }
-const btn3 = () => {
-  router.push("/play")
-}
 
-const btn4 = async () => {
+const indexReactive = reactive({
+  epgList: [],
+  m3uList: [],
+  async init() {
+    await epgStore.getEPGList();
+    await m3uStore.getM3uList();
+    indexReactive.m3uList = m3uStore.m3uList.filter(x => settingStore.favoriteList.some(y => y === x.tvgId));
+  }
+})
 
-}
-const btn5 = () => {
-  router.push("/haha")
-}
+onMounted(() => {
+  indexReactive.init()
+})
+
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

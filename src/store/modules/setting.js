@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {exists, BaseDirectory, readTextFile, create, writeTextFile, open, writeFile} from '@tauri-apps/plugin-fs';
+import {exists, BaseDirectory, readTextFile, writeTextFile} from '@tauri-apps/plugin-fs';
 import Config from "../../../public/config.json"
 import {downloadFile} from "@/utils/download.js";
 import {ElMessage, ElNotification} from "element-plus";
