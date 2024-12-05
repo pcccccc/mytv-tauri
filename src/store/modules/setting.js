@@ -53,7 +53,7 @@ const useSettingStore = defineStore('setting', {
                 message: '请稍等...',
             })
             this.epgUrlList.forEach(item => {
-                downloadFile(item.url, 'epg', item.name).then(res => {
+                downloadFile(item.url, 'epg', `${item.name}.epg`).then(res => {
                     ElMessage({
                         message: res.message,
                         type: res.code
