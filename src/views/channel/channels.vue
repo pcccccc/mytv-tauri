@@ -4,7 +4,7 @@
       <div class="text-2xl">电视列表</div>
       <el-button title="回到首页" @click="router.back()"><i class="fa-solid fa-arrow-left"></i></el-button>
     </div>
-    <div>
+    <div v-loading="channels.loading" element-loading-text="正在加载频道列表...">
       <div class="flex gap-3">
         <el-switch active-text="只显示收藏"
                    inactive-text="显示全部"
@@ -26,10 +26,11 @@
              type="card">
       <el-tab-pane v-for="item in channels.groupFileNameList" :label="item" :name="item"></el-tab-pane>
     </el-tabs>
-    <div class="tv-tag-area overflow-auto grid grid-cols-3 flex-wrap gap-3 justify-around w100 mt-5"
-         :class="{'group':channels.isGroupByFile}">
-      <div v-for="item in m3uInfo.showList"
-           :key="item.tvgId"
+    <div class="tv-tag-area grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5 "
+         :class="{'group':channels.isGroupByFile}"
+    >
+      <div :key="item.tvgId"
+           v-for="item in m3uInfo.showList"
            class="tv-tag h-max text-white flex flex-col rounded-md"
            @click="m3uInfo.checkItem(item)">
         <div class="flex justify-between items-center gap-3 p-2  cursor-pointer ">
@@ -55,10 +56,11 @@
 <script setup>
 import useEPGStore from '@/store/modules/epg.js';
 import useM3uStore from '@/store/modules/m3u.js';
-import {computed, onMounted, reactive} from 'vue';
+import {computed, nextTick, onMounted, reactive} from 'vue';
 import router from '@/router/index.js';
-import EpgList from '@/views/play/epgItem.vue';
+import EpgList from '@/views/channel/epgItem.vue';
 import useSettingStore from "@/store/modules/setting.js";
+import {openNewPlayerWindow, openNewWindow} from "@/utils/window.js";
 
 const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
 
@@ -67,15 +69,17 @@ const epgStore = useEPGStore();
 const settingStore = useSettingStore();
 
 const m3uInfo = reactive({
+  loading: false,
   list: [],
   showList: [],
   async getList() {
+    channels.loading = true;
     await m3uStore.getM3uList();
     m3uInfo.list = m3uStore.m3uList;
-    // m3uInfo.showList = m3uInfo.list;
+    channels.loading = false;
   },
   checkItem(item) {
-    // todo 打开新的播放窗口播放
+    openNewPlayerWindow("/#/play", {label: item.tvgId, title: item.name}, item)
   },
   favoriteList: [],
 
@@ -124,7 +128,9 @@ const channels = reactive({
       channels.changeShowList();
     }
   },
+  loading: false,
   changeShowList() {
+    // channels.loading = true;
     let showList = [];
     if (channels.showFavorite) {
       showList = m3uInfo.list.filter(x => m3uInfo.favoriteList.some(y => y === x.tvgId));
@@ -135,6 +141,9 @@ const channels = reactive({
       showList = showList.filter(x => x.source == channels.checkGroup);
     }
     m3uInfo.showList = showList;
+    // nextTick(() => {
+    //   channels.loading = false;
+    // })
   }
 });
 

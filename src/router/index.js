@@ -1,4 +1,5 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
+import useSettingStore from "@/store/modules/setting.js";
 
 /**
  * Note: 路由配置项
@@ -11,7 +12,7 @@ import {createRouter, createWebHashHistory} from 'vue-router';
  * redirect: noRedirect             // 当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
  * name:'router-name'               // 设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
  * query: '{"id": 1, "name": "ry"}' // 访问路由的默认传递参数
- * roles: ['admin', 'common']       // 访问路由的角色权限
+ * roles: ['admin', 'utils']       // 访问路由的角色权限
  * permissions: ['a:a:a', 'b:b:b']  // 访问路由的菜单权限
  * meta : {
  noCache: true                   // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
@@ -37,11 +38,15 @@ export const constantRoutes = [
         path: '/play',
         name: 'Play',
         component: () => import('@/views/play/play.vue'),
+    },{
+        path: '/haha',
+        name: 'Haha',
+        component: () => import('@/views/play/test.vue'),
     },
     {
         path: '/channels',
         name: 'Channels',
-        component: () => import('@/views/play/channels.vue'),
+        component: () => import('@/views/channel/channels.vue'),
     },
     {
         path: '/setting',
@@ -57,5 +62,16 @@ const router = createRouter({
     // 	return { top: 0 };  // 此处返回值应为 PositionDescriptor 类型
     // }
 });
+
+// 全局路由监听
+router.beforeEach(async (to, from, next) => {
+     // if(to.fullPath === '/index'){
+        useSettingStore().setConfigJs();
+        await useSettingStore().getSetting();
+        // useSettingStore().reloadEpgFiles();
+    // }
+    // 可以在这里进行一些全局的路由处理
+    next()
+})
 
 export default router;

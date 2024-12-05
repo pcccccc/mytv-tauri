@@ -79,7 +79,7 @@
 <script setup>
 import {ref, onMounted, reactive} from 'vue';
 import useSettingStore from '../../store/modules/setting.js';
-import {downloadFile} from '@/common/download.js';
+import {downloadFile} from '@/utils/download.js';
 import {ElMessage} from 'element-plus';
 import router from '@/router/index.js';
 import useM3uStore from "@/store/modules/m3u.js";
@@ -180,6 +180,13 @@ const settingReactive = reactive({
   m3uCustomList: [],
   addTvgObj: {},
   addToCustomM3u() {
+    if(settingReactive.addTvgObj.tvgId.indexOf('.') !== -1){
+      ElMessage({
+        message: '频道名称不能包含点号',
+        type: 'warning'
+      });
+      return;
+    }
     let data = {
       ...settingReactive.addTvgObj,
       name: settingReactive.addTvgObj.tvgId,

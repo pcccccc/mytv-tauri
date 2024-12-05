@@ -67,8 +67,10 @@
 import {onMounted, reactive, ref} from 'vue';
 import Hls from 'hls.js';
 import {ElMessage} from "element-plus";
-import {formatNowTime, getWeekDay} from "@/common/time.js";
-import {determineIPType} from "@/common/index.js";
+import {formatNowTime, getWeekDay} from "@/utils/time.js";
+import {determineIPType} from "@/utils/index.js";
+import {load} from "@tauri-apps/plugin-store";
+import {useRoute} from "vue-router";
 
 const videoPlayer = ref(null);
 const controls = reactive({
@@ -79,6 +81,7 @@ const controls = reactive({
     controls.resetTimer()
   },
   resetTimer() {
+    controls.isHovering = true
     clearTimeout(controls.hoverTimer)
     controls.hoverTimer = setTimeout(() => {
       controls.isHovering = false
@@ -288,9 +291,19 @@ const getNowTime = reactive({
     }, 1000)
   }
 })
-onMounted(() => {
+const route = useRoute();
+
+async function init() {
+  let tvgId = route.query.tvgId;
+  const store = await load('playInfo.json', {autoSave: false});
+  video.checkItem = await store.get(`tvgId-${tvgId}`);
   video.init();
+  video.loadURL(video.checkItem.uri);
   getNowTime.start();
+}
+
+onMounted(() => {
+  init()
 });
 </script>
 
@@ -305,7 +318,7 @@ onMounted(() => {
 
     video {
       width: 100%;
-      opacity: 0.1;
+      opacity: 0.05;
     }
 
     .video-area-controls {

@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {exists, BaseDirectory, readTextFile, create, writeTextFile, open, writeFile} from '@tauri-apps/plugin-fs';
 import Config from "../../../public/config.json"
-import {downloadFile} from "@/common/download.js";
+import {downloadFile} from "@/utils/download.js";
 import {ElMessage, ElNotification} from "element-plus";
 
 const useSettingStore = defineStore('setting', {

@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import {BaseDirectory, exists, readFile, readDir, readTextFile} from '@tauri-apps/plugin-fs';
 import parser from 'epg-parser';
-import {formatNowTime} from '@/common/time.js';
+import {formatNowTime} from '@/utils/time.js';
 
 
 const useEPGStore = defineStore('epg', {

@@ -29,7 +29,7 @@
 
 <script setup>
 import {nextTick, onMounted, reactive} from 'vue';
-import {currentAndNextProgram, markProgramStatus} from '@/common/epg.js';
+import {currentAndNextProgram, markProgramStatus} from '@/utils/epg.js';
 
 let props = defineProps(['epg', 'title']);
 let epgReactive = reactive({

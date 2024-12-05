@@ -26,6 +26,8 @@ tauri-plugin-log = "2.0.0-rc"
 tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-http = "2"
+tauri-utils = "2.1.0"
+tauri-plugin-store = "2.0.0"
 url = { version = "2.5.4", features = ["serde"] }
 reqwest = "0.12.9"
 anyhow = "1.0.93"
