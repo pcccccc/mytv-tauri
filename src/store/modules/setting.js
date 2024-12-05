@@ -11,8 +11,7 @@ const useSettingStore = defineStore('setting', {
     actions: {
         setConfigJs() {
             Object.keys(Config).forEach(key => {
-                let value = Config[key];
-                this[key] = value;
+                this[key] = Config[key];
             });
         },
         async setSetting(obj) {
@@ -37,8 +36,7 @@ const useSettingStore = defineStore('setting', {
                 let settingText = await readTextFile(this.settingFileName, {baseDir: BaseDirectory.Resource});
                 let json = JSON.parse(settingText);
                 Object.keys(json).forEach(key => {
-                    let value = json[key];
-                    this[key] = value;
+                    this[key] = json[key];
                 });
             } else {
                 let updateTime = new Date();
