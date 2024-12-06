@@ -4,6 +4,7 @@
     <div class="flex gap-3">
       <el-button @click="toChannels">频道</el-button>
       <el-button @click="toSetting">设置</el-button>
+      <el-button @click="toInfo">你点着试试</el-button>
     </div>
     <div class="w-4/5">
       <el-divider><i class="fa-solid fa-star text-2xl text-yellow-500"></i></el-divider>
@@ -27,6 +28,7 @@ import useSettingStore from "@/store/modules/setting.js";
 import ChannelItem from "@/components/channelItem.vue";
 
 import {load} from "@tauri-apps/plugin-store";
+
 const m3uStore = useM3uStore();
 const epgStore = useEPGStore();
 const settingStore = useSettingStore();
@@ -35,6 +37,10 @@ const showList = computed(() => m3uStore.m3uList.filter(x => settingStore.favori
 
 const toSetting = () => {
   router.push("/setting")
+}
+
+const toInfo = () => {
+  router.push("/info")
 }
 
 const toChannels = () => {
@@ -55,7 +61,7 @@ onMounted(() => {
   indexReactive.init()
 })
 
-onUnmounted(()=>{
+onUnmounted(() => {
   // 删除playInfo.json的store
   load('playInfo.json', {autoSave: false}).then(store => store.clear())
 })

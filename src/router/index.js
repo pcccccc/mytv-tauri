@@ -38,7 +38,7 @@ export const constantRoutes = [
         path: '/play',
         name: 'Play',
         component: () => import('@/views/play/index.vue'),
-    },{
+    }, {
         path: '/haha',
         name: 'Haha',
         component: () => import('@/views/play/test.vue'),
@@ -52,6 +52,11 @@ export const constantRoutes = [
         path: '/setting',
         name: 'Setting',
         component: () => import('@/views/setting/index.vue'),
+    },
+    {
+        path: '/Info',
+        name: 'Info',
+        component: () => import('@/views/info/index.vue'),
     }
 ];
 
@@ -65,10 +70,10 @@ const router = createRouter({
 
 // 全局路由监听
 router.beforeEach(async (to, from, next) => {
-     // if(to.fullPath === '/index'){
-        useSettingStore().setConfigJs();
-        await useSettingStore().getSetting();
-        // useSettingStore().reloadEpgFiles();
+    // if(to.fullPath === '/index'){
+    useSettingStore().setConfigJs();
+    await useSettingStore().getSetting();
+    // useSettingStore().reloadEpgFiles();
     // }
     // 可以在这里进行一些全局的路由处理
     next()
