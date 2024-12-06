@@ -32,14 +32,15 @@
         <span>添加单条频道</span>
       </template>
       <div class="flex gap-2">
-        <el-input v-model="settingReactive.addTvgObj.uri" placeholder="请输入频道地址"></el-input>
-        <el-input v-model="settingReactive.addTvgObj.tvgId" placeholder="请输入频道名称"></el-input>
         <el-input v-model="settingReactive.addTvgObj.tvgLogo" placeholder="请输入频道图标地址"></el-input>
+        <el-input v-model="settingReactive.addTvgObj.tvgId" placeholder="请输入频道名称"></el-input>
+        <el-input v-model="settingReactive.addTvgObj.uri" placeholder="请输入频道地址"></el-input>
         <el-button type="primary" @click="settingReactive.addToCustomM3u">添加</el-button>
       </div>
       <div class="flex flex-col mt-3">
         <div class="flex gap-2 items-center w-100 mt-2" v-for="(item,index) in settingReactive.m3uCustomList">
-          <div :title="`${item.tvgId} - ${item.uri}`" class="flex-1 truncate">
+          <div :title="`${item.tvgId} - ${item.uri}`" class="flex-1 truncate flex items-center">
+            <el-image v-if="item.tvgLogo" :src="item.tvgLogo" fit="scale-down" class="w-[40px] backdrop-brightness-50"></el-image>
             <el-tag>{{ item.tvgId }}</el-tag>
             <span class="text-sm ml-3">{{ item.uri }}</span>
           </div>

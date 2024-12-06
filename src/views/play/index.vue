@@ -1,14 +1,20 @@
 <template>
   <div class="play">
     <div class="video-area relative"
+         @dblclick.stop="controls.fullScreen"
          @mouseenter="controls.startHoverState"
          @mousemove="controls.resetTimer"
          @mouseleave="controls.stopHoverState">
-<!--            <video-player v-if="video.show"></video-player>-->
-<!--            :class="{ 'hide': !controls.isHovering }"-->
+      <video-player v-if="video.checkItem.channelInfo.uri"
+                    ref="videoPlayerRef"
+                    v-model="video.checkItem.channelInfo.uri"
+                    @update:isPlay="controls.handlePlayChange"
+                    @update:playInfo="controls.changePlayInfo"
+      ></video-player>
       <div class="video-area-controls absolute top-0 bottom-0 left-0 right-0"
+           :class="{ 'hide': !controls.isHovering }"
            v-if="video.checkItem.channelInfo.name">
-        <div class="controls-top height-[85px] top-0 absolute p-3 flex flex-nowrap justify-between items-center">
+        <div class="controls-top height-[85px] top-0 absolute p-3 flex flex-nowrap justify-between items-center gap-3">
           <div class="flex items-center gap-3">
             <el-image v-if="video.checkItem.channelInfo.tvgLogo"
                       :src="video.checkItem.channelInfo.tvgLogo"
@@ -22,9 +28,9 @@
               <timeline ref="timelineRef" :epg="video.checkItem.epgList"/>
             </div>
           </div>
-          <div class="time text-white flex flex-col justify-center items-center">
+          <div class="time text-white flex flex-col justify-center items-center tabular-nums">
             <div class="text-sm flex gap-1"><span>{{ getNowTime.date }}</span> <span>{{ getNowTime.week }}</span></div>
-            <div class="text-4xl">{{ getNowTime.time }}</div>
+            <div class="text-3xl w-full text-left">{{ getNowTime.time }}</div>
           </div>
         </div>
         <div
@@ -38,26 +44,29 @@
               }}
             </div>
           </div>
-          <!--          <div class="controls-bottom-button flex flex-1 justify-center flex-nowrap gap-5 text-2xl">-->
-          <!--            <div @click.stop="video.playPause" title="播放暂停">-->
-          <!--              <i class="fa-solid fa-play" v-show="video.isPlay"></i><i-->
-          <!--                class="fa-solid fa-pause" v-show="!video.isPlay"></i></div>-->
-          <!--            <div @click.stop="video.stop" title="停止"><i class="fa-solid fa-stop"></i></div>-->
-          <!--            <div @click.stop="video.refresh" title="刷新"><i class="fa-solid fa-rotate"></i></div>-->
-          <!--            <div @click.stop="video.fullScreen" title="全屏"><i class="fa-solid fa-expand"></i></div>-->
-          <!--            <div title="音量" class="flex items-center justify-between w-[140px]">-->
-          <!--              <i class="fa-solid fa-volume-xmark" v-show="video.volumeValue == 0"></i>-->
-          <!--              <i class="fa-solid fa-volume-low" v-show="video.volumeValue>=1 && video.volumeValue<60"></i>-->
-          <!--              <i class="fa-solid fa-volume-high" v-show="video.volumeValue >=60"></i>-->
-          <!--              <div class="w-[100px]">-->
-          <!--                <el-slider size="small" @change="video.changeVolume" v-model="video.volumeValue"/>-->
-          <!--              </div>-->
-          <!--            </div>-->
-          <!--          </div>-->
-          <div class="info flex flex-col items-center justify-end">
-            <!--            <div class="text-xs">分辨率：{{ video.videoInfo.resolution || '未获取到' }}</div>-->
-            <!--            <div class="text-xs">网速： {{ video.videoInfo.networkSpeed }}</div>-->
-            <!--            <div class="text-xs">已缓冲： {{ video.videoInfo.bufferLength }} 秒</div>-->
+          <div class="controls-bottom-button flex flex-1 justify-center flex-nowrap gap-5 text-2xl">
+            <div @click.stop="controls.playPause" title="播放暂停">
+              <i class="fa-solid fa-play" v-show="!controls.isPlay"></i><i
+                class="fa-solid fa-pause" v-show="controls.isPlay"></i></div>
+            <!--            <div @click.stop="controls.stop" title="停止"><i class="fa-solid fa-stop"></i></div>-->
+            <div @click.stop="controls.refresh" title="刷新"><i class="fa-solid fa-rotate"></i></div>
+            <div @click.stop="controls.fullScreen" title="全屏"><i class="fa-solid fa-expand"></i></div>
+            <div title="音量" class="flex items-center justify-between w-[140px]">
+              <i class="fa-solid fa-volume-xmark" v-show="controls.volumeValue == 0"></i>
+              <i class="fa-solid fa-volume-low" v-show="controls.volumeValue>=1 && controls.volumeValue<60"></i>
+              <i class="fa-solid fa-volume-high" v-show="controls.volumeValue >=60"></i>
+              <div class="w-[100px]">
+                <el-slider size="small" @change="controls.changeVolume" v-model="controls.volumeValue"/>
+              </div>
+            </div>
+          </div>
+          <div class="info flex flex-col items-end justify-end cursor-default select-none tabular-nums">
+            <div class="text-xs">流分辨率：{{ controls.playInfo.videoSize }}</div>
+            <div class="text-xs">参考网速： {{ controls.playInfo.networkSpeed }}</div>
+            <div class="text-xs">播放/已缓冲：{{ formatSeconds(controls.playInfo.playerTime) }}/{{
+                formatSeconds(controls.playInfo.bufferInfo - controls.playInfo.playerTime)
+              }}
+            </div>
           </div>
         </div>
       </div>
@@ -67,11 +76,13 @@
 
 <script setup>
 import {getCurrentInstance, onMounted, reactive, ref, watch} from 'vue';
-import {formatTimeByFormat, getWeekDay} from "@/utils/time.js";
+import {getCurrentWindow} from '@tauri-apps/api/window';
+import {formatSeconds, formatTimeByFormat, getWeekDay} from "@/utils/time.js";
 import {determineIPType} from "@/utils/index.js";
 import {load} from "@tauri-apps/plugin-store";
 import {useRoute} from "vue-router";
 import Timeline from "@/views/play/timeline.vue";
+import VideoPlayer from "@/views/play/videoPlayer.vue";
 
 const {proxy} = getCurrentInstance();
 
@@ -79,6 +90,10 @@ const controls = reactive({
   hoverTimer: null,
   isHovering: false,
   epgList: [],
+  playInfo: {},
+  changePlayInfo(info) {
+    controls.playInfo = info;
+  },
   startHoverState() {
     controls.isHovering = true
     controls.resetTimer()
@@ -94,6 +109,28 @@ const controls = reactive({
     clearTimeout(controls.hoverTimer)
     controls.isHovering = false;
   },
+  isPlay: true,
+  playPause() {
+    proxy.$refs.videoPlayerRef.playPause();
+  },
+  handlePlayChange(val) {
+    controls.isPlay = val
+  },
+  stop() {
+    proxy.$refs.videoPlayerRef.stop();
+  },
+  refresh() {
+    proxy.$refs.videoPlayerRef.refresh();
+  },
+  isFullScreen: false,
+  fullScreen() {
+    getCurrentWindow().setFullscreen(!controls.isFullScreen);
+    controls.isFullScreen = !controls.isFullScreen;
+  },
+  volumeValue: 100,
+  changeVolume(val) {
+    proxy.$refs.videoPlayerRef.setVolume(val);
+  }
 })
 const video = reactive({
   show: true,
@@ -125,11 +162,12 @@ async function init() {
 }
 
 watch(() => controls.isHovering, () => {
-  proxy.$refs.timelineRef.scrollToCurrentProgram();
+  proxy.$refs.timelineRef && proxy.$refs.timelineRef.scrollToCurrentProgram();
 })
 
 onMounted(() => {
-  init()
+  init();
+
 });
 </script>
 
@@ -144,7 +182,7 @@ onMounted(() => {
 
     video {
       width: 100%;
-      opacity: 0.05;
+      //opacity: 0.05;
     }
 
     .video-area-controls {
@@ -156,6 +194,9 @@ onMounted(() => {
         .controls-bottom {
           bottom: -75px
         }
+      }
+
+      .time {
       }
 
       .controls-top, .controls-bottom {

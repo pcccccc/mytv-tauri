@@ -4,7 +4,7 @@
       正在播放：{{ epgReactive.now?.title || '未解析到节目' }}
     </div>
     <div :title="epgReactive.now?.title" class="peg-list-next px-1 py-1 truncate rounded-md p-1">
-      即将播放：{{ epgReactive.next.title || '未解析到节目' }}
+      即将播放：{{ epgReactive.next?.title || '未解析到节目' }}
     </div>
     <div class="w100 text-right cursor-pointer" @click.stop="epgReactive.showAllEpg">查看全部节目单</div>
     <el-dialog :title="title+' 全部节目'" v-model="epgReactive.isShowAllEpg" align-center destroy-on-close>

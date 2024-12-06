@@ -109,6 +109,7 @@
     "core:window:allow-set-focus",
     "core:window:allow-show",
     "core:window:allow-unminimize",
+    "core:window:allow-set-fullscreen",
     "store:default",
     "store:allow-save",
     "store:allow-get",

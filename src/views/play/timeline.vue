@@ -106,7 +106,6 @@ const timeTicks = computed(() => {
     // 每次增加10分钟
     start.setMinutes(start.getMinutes() + 10)
   }
-  console.log(ticks)
   return ticks
 })
 

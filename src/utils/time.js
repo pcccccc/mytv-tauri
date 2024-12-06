@@ -33,6 +33,12 @@ export function getWeekDay() {
     return days[dayOfWeek];
 }
 
+/**
+ * 格式化日期对象为更易读的字符串格式
+ * 该函数根据当前日期与给定日期的差异，返回不同的日期描述
+ * @param {Date} date - 可选的日期对象，默认为当前日期
+ * @returns {string} - 格式化后的日期字符串
+ */
 export function formatDate(date = new Date()) {
     const now = new Date();
     date = new Date(date);
@@ -50,5 +56,34 @@ export function formatDate(date = new Date()) {
     } else {
         // 返回月日 时分 格式
         return formatTimeByFormat('MM-dd hh:mm', date);
+    }
+}
+
+/**
+ * 将给定的秒数格式化为易于阅读的字符串格式。
+ * 如果秒数大于等于一小时，则返回小时、分钟和秒的格式；
+ * 否则，返回分钟和秒的格式。
+ *
+ * @param {number} seconds - 需要格式化的秒数。
+ * @returns {string} 格式化后的时间字符串。
+ */
+export function formatSeconds(seconds) {
+    // 计算小时
+    const hours = Math.floor(seconds / 3600);
+    // 计算剩余分钟
+    const minutes = Math.floor((seconds % 3600) / 60);
+    // 计算剩余秒数
+    const remainingSeconds = Math.floor(seconds % 60);
+
+    // 使用 padStart 确保每个数字都是两位数
+    const formattedHours = hours.toString().padStart(2, '0');
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+
+    // 根据是否有小时返回不同格式
+    if (hours > 0) {
+        return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    } else {
+        return `${formattedMinutes}:${formattedSeconds}`;
     }
 }

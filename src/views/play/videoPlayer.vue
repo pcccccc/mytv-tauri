@@ -2,26 +2,26 @@
   <video ref="videoPlayer" autoplay></video>
 </template>
 <script setup>
-import {reactive, ref} from "vue";
+import {onMounted, onUnmounted, reactive, ref} from "vue";
 import Hls from "hls.js";
 import {ElMessage} from "element-plus";
+import {formatSeconds} from "@/utils/time.js";
 
+const emit = defineEmits();
 const videoPlayer = ref(null);
-const video = reactive({
+const hlsReactive = reactive({
   hls: null,
-  videoInfo: {
-    resolution: '',
-    networkSpeed: '',
-    bufferLength: 0,
-  },
+  playInfoInterval: null,
   init() {
     if (Hls.isSupported()) {
       // 创建 Hls.js 实例
-      video.hls = new Hls({
-        maxBufferLength: 30, // 最大缓冲长度
-        maxBufferSize: 60 * 1000 * 1000 // 最大缓冲大小
-      });
-      video.initHlsEvent();
+      hlsReactive.hls = new Hls();
+      hlsReactive.initHlsEvent();
+      hlsReactive.getPlayInfo();
+      // 定期更新缓冲区信息
+      hlsReactive.playInfoInterval = setInterval(() => {
+        hlsReactive.getPlayInfo();
+      }, 1000);
     } else {
       ElMessage({
         message: '加载失败，请于项目的 issues 提交 bug ',
@@ -31,9 +31,9 @@ const video = reactive({
   },
   initHlsEvent() {
     // 监听 Hls.js 加载和播放错误事件
-    video.hls.on(Hls.Events.ERROR, (event, data) => {
+    hlsReactive.hls.on(Hls.Events.ERROR, (event, data) => {
       if (data.fatal) {
-        video.show = false;
+        hlsReactive.show = false;
         switch (data.type) {
           case Hls.ErrorTypes.NETWORK_ERROR:
             ElMessage({
@@ -57,88 +57,66 @@ const video = reactive({
             console.error('播放失败：未知错误');
             break;
         }
+        emit('update:isPlay', false)
       }
     });
 
     // 清理 Hls.js 实例
-    video.hls.on(Hls.Events.DESTROYED, () => {
-      video.hls.destroy();
+    hlsReactive.hls.on(Hls.Events.DESTROYED, () => {
+      hlsReactive.hls.destroy();
       clearInterval(bufferInterval);
     });
 
-    // 监听视频分辨率和格式
-    video.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-      const currentLevel = data.levels[0];
-      if (currentLevel.width != 0) {
-        video.videoInfo.resolution = `${currentLevel.width}x${currentLevel.height}`;
-      } else {
-        video.videoInfo.resolution = null;
-      }
-    });
-
     // 监听缓冲区状态
-    video.hls.on(Hls.Events.BUFFER_CREATED, (event, data) => {
-      video.updateBufferInfo();
+    hlsReactive.hls.on(Hls.Events.BUFFER_CREATED, (event, data) => {
+      hlsReactive.updateBufferInfo();
     });
-    // 定期更新缓冲区信息
-    const bufferInterval = setInterval(() => {
-      //todo 这两个方法是Claude写的 不知道结果对不对 后期阅读api再换
-      video.updateBufferInfo();
-      video.updateNetworkInfo();
-    }, 1000);
+  },
+  getPlayInfo() {
+    let bufferInfo = hlsReactive.updateBufferInfo();
+    let networkSpeed = hlsReactive.updateNetworkInfo();
+    let videoSize = hlsReactive.updateVideoSize();
+    let playerTime = hlsReactive.updatePlayTime();
+    emit('update:playInfo', {bufferInfo, networkSpeed, videoSize, playerTime})
+  },
+  updatePlayTime() {
+    if (videoPlayer.value && videoPlayer.value.played && videoPlayer.value.played.length > 0) {
+      return videoPlayer.value.played.end(0);
+    }
+    return 0;
+  },
+  updateVideoSize() {
+    if (videoPlayer.value) {
+      return `${videoPlayer.value.videoWidth} x ${videoPlayer.value.videoHeight}`;
+    }
   },
   // 更新缓冲区信息的方法
   updateBufferInfo() {
     if (videoPlayer.value) {
-      const buffered = videoPlayer.value.buffered;
-
-      if (buffered.length > 0) {
-        // 计算已缓冲的总时长
-        const bufferedEnd = buffered.end(buffered.length - 1);
-        const bufferedStart = buffered.start(0);
-        const bufferLength = bufferedEnd - bufferedStart;
-
-        this.videoInfo.bufferLength = Number(bufferLength.toFixed(2));
-      }
+      return videoPlayer.value.duration;
     }
+    return '尚未缓冲'
   },
   // 更新网络信息
   updateNetworkInfo() {
-    if (this.hls && this.hls.levels && this.hls.levels.length > 0) {
-      const currentLevel = this.hls.levels[this.hls.currentLevel];
-
-      if (currentLevel && currentLevel.details) {
-        // 获取最近加载的片段
-        const lastLoadedFragment = currentLevel.details.fragments[currentLevel.details.fragments.length - 1];
-        if (lastLoadedFragment && lastLoadedFragment.stats) {
-          const loadedBytes = lastLoadedFragment.stats.loaded || 0;
-          const duration = lastLoadedFragment.duration || 1;
-
-          // 计算网络速度
-          const speed = loadedBytes > 0 && duration > 0
-              ? (loadedBytes / (duration * 1024)).toFixed(2)
-              : '0';
-
-          this.videoInfo.networkSpeed = `${speed} KB/s`;
-
-          // 可以添加更多信息收集
-          this.videoInfo.bandwidth = lastLoadedFragment.stats.bwEstimate
-              ? (lastLoadedFragment.stats.bwEstimate / 1024).toFixed(2)
-              : '0';
-        } else {
-          // 如果没有片段信息，设置默认值
-          this.videoInfo.networkSpeed = '0 KB/s';
-          this.videoInfo.bandwidth = '0';
-        }
+    if (this.hls && this.hls.bandwidthEstimate) {
+      let bps = this.hls.bandwidthEstimate;
+      const kbps = bps / 8 / 1024;
+      if (kbps >= 1024) {
+        return (kbps / 1024).toFixed(2) + ' MB/s';
+      } else {
+        return kbps.toFixed(2) + ' KB/s';
       }
     }
+    return '尚未下载';
   },
+
   loadURL(url) {
     // url = 'https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/hls/xgplayer-demo.m3u8';
     // 加载 M3U8 文件
-    video.hls.loadSource(url);
-    video.hls.attachMedia(videoPlayer.value);
-    video.videoInfo = {
+    hlsReactive.hls.loadSource(url);
+    hlsReactive.hls.attachMedia(videoPlayer.value);
+    hlsReactive.videoInfo = {
       resolution: '',
       networkSpeed: '',
       bufferLength: 0,
@@ -149,48 +127,55 @@ const video = reactive({
     if (videoPlayer.value) {
       if (videoPlayer.value.paused) {
         videoPlayer.value.play();
-        video.isPlay = true;
+        emit('update:isPlay', true)
       } else {
         videoPlayer.value.pause();
-        video.isPlay = false;
+        emit('update:isPlay', false)
       }
+
     }
   },
   stop() {
     if (videoPlayer.value) {
       videoPlayer.value.pause();
       videoPlayer.value.currentTime = 0;
-      video.isPlay = false;
+      emit('update:isPlay', false)
     }
   },
   refresh() {
-    if (video.hls) {
-      video.hls.destroy();
-      video.init();
-      video.loadURL(this.checkItem.uri);
-      video.isPlay = false;
+    if (hlsReactive.hls) {
+      emit('update:playInfo', {})
+      hlsReactive.hls.destroy();
+      hlsReactive.init();
+      hlsReactive.loadURL(props.modelValue);
+      emit('update:isPlay', true)
+      emit('update:refresh')
     }
   },
   volumeValue: 0,
-  changeVolume() {
+  setVolume() {
     if (videoPlayer.value) {
-      videoPlayer.value.volume = video.volumeValue / 100;
-    }
-  },
-  isFullScreen: false,
-  fullScreen() {
-    //todo 未实现屏幕全屏
-    if (videoPlayer.value) {
-      if (!document.fullscreenElement) {
-        videoPlayer.value.requestFullscreen();
-        videoPlayer.value.isFullScreen = true;
-      } else {
-        document.exitFullscreen();
-        videoPlayer.value.isFullScreen = false;
-      }
+      videoPlayer.value.volume = hlsReactive.volumeValue / 100;
+      emit('update:volume', videoPlayer.value.volume)
     }
   },
 });
+let props = defineProps(['modelValue']);
+
+onMounted(() => {
+  hlsReactive.init();
+  hlsReactive.loadURL(props.modelValue);
+})
+
+onUnmounted(() => {
+  clearInterval(hlsReactive.playInfoInterval)
+})
+defineExpose({
+  playPause: hlsReactive.playPause,
+  stop: hlsReactive.stop,
+  refresh: hlsReactive.refresh,
+  setVolume: hlsReactive.setVolume,
+})
 </script>
 <style scoped>
 

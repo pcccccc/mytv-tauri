@@ -8,6 +8,8 @@ export async function openNewPlayerWindow(url, windowOpt, data) {
     url = `${url}?tvgId=${data.tvgId}`
     await openNewWindow(url, {
         ...windowOpt,
+        minWidth: 900,
+        minHeight: 507,
         width: 1280,
         height: 720,
         center: true,
