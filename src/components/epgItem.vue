@@ -6,7 +6,7 @@
     <div :title="epgReactive.now?.title" class="peg-list-next px-1 py-1 truncate rounded-md p-1">
       即将播放：{{ epgReactive.next.title || '未解析到节目' }}
     </div>
-    <div class="w100 text-right cursor-pointer" @click="epgReactive.showAllEpg">查看全部节目单</div>
+    <div class="w100 text-right cursor-pointer" @click.stop="epgReactive.showAllEpg">查看全部节目单</div>
     <el-dialog :title="title+' 全部节目'" v-model="epgReactive.isShowAllEpg" align-center destroy-on-close>
       <div class="flex flex-col gap-3 all-epg-dialog">
         <div v-for="item in epgReactive.epgList" class="p-3 all-epg-item rounded-md text-white"
@@ -15,7 +15,7 @@
             <el-tag type="warning" v-if="item.status == -1">已播放</el-tag>
             <el-tag type="success" v-if="item.status == 0">播放中</el-tag>
             <el-tag v-if="item.status == 1">未开始</el-tag>
-            <div>播出时间：{{ item.start }}</div>
+            <div>播出时间：{{ formatDate(item.startTime)}}</div>
           </div>
           <div class="mt-2">{{ item.title }}</div>
         </div>
@@ -30,6 +30,7 @@
 <script setup>
 import {nextTick, onMounted, reactive} from 'vue';
 import {currentAndNextProgram, markProgramStatus} from '@/utils/epg.js';
+import {formatDate} from "@/utils/time.js";
 
 let props = defineProps(['epg', 'title']);
 let epgReactive = reactive({

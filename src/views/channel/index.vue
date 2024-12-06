@@ -42,10 +42,10 @@ import useEPGStore from '@/store/modules/epg.js';
 import useM3uStore from '@/store/modules/m3u.js';
 import {computed, nextTick, onMounted, reactive} from 'vue';
 import router from '@/router/index.js';
-import EpgList from '@/views/channel/epgItem.vue';
+import EpgList from '@/components/epgItem.vue';
 import useSettingStore from "@/store/modules/setting.js";
 import {openNewPlayerWindow, openNewWindow} from "@/utils/window.js";
-import ChannelItem from "@/views/channel/channelItem.vue";
+import ChannelItem from "@/components/channelItem.vue";
 
 const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
 
@@ -55,10 +55,7 @@ const settingStore = useSettingStore();
 
 const m3uInfo = reactive({
   loading: false,
-  showList: [],
-  checkItem(item) {
-    openNewPlayerWindow("/#/play", {label: item.tvgId, title: item.name}, item)
-  },
+  showList: []
 });
 const channels = reactive({
   findPrograms(name) {

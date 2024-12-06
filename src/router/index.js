@@ -37,7 +37,7 @@ export const constantRoutes = [
     {
         path: '/play',
         name: 'Play',
-        component: () => import('@/views/play/play.vue'),
+        component: () => import('@/views/play/index.vue'),
     },{
         path: '/haha',
         name: 'Haha',
@@ -46,7 +46,7 @@ export const constantRoutes = [
     {
         path: '/channels',
         name: 'Channels',
-        component: () => import('@/views/channel/channelList.vue'),
+        component: () => import('@/views/channel/index.vue'),
     },
     {
         path: '/setting',

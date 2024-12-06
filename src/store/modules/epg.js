@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia';
 import {BaseDirectory, exists, readFile, readDir, readTextFile} from '@tauri-apps/plugin-fs';
 import parser from 'epg-parser';
-import {formatNowTime} from '@/utils/time.js';
+import {formatTimeByFormat} from '@/utils/time.js';
 
 
 const useEPGStore = defineStore('epg', {
@@ -76,8 +76,8 @@ const useEPGStore = defineStore('epg', {
                 let findList = this.programs.filter(x => x.channel == findChannel.id);
                 return findList.map(x => {
                     return {
-                        start: formatNowTime('MM-dd hh:mm', x.start),
-                        stop: formatNowTime('MM-dd hh:mm', x.stop),
+                        start: formatTimeByFormat('MM-dd hh:mm', x.start),
+                        stop: formatTimeByFormat('MM-dd hh:mm', x.stop),
                         startTime: x.start,
                         stopTime: x.stop,
                         title: x.title[0].value

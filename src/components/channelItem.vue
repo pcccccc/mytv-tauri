@@ -23,7 +23,7 @@
   </div>
 </template>
 <script setup>
-import EpgList from "@/views/channel/epgItem.vue";
+import EpgList from "@/components/epgItem.vue";
 import {openNewPlayerWindow} from "@/utils/window.js";
 import useSettingStore from "@/store/modules/setting.js";
 
@@ -31,8 +31,12 @@ const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
 const props = defineProps(['channelInfo', 'epgList']);
 const settingStore = useSettingStore();
 
-function checkItem (){
-  openNewPlayerWindow("/#/play", {label: props.channelInfo.tvgId, title: props.channelInfo.name}, props.channelInfo)
+function checkItem() {
+  openNewPlayerWindow("/#/play", {label: props.channelInfo.tvgId, title: props.channelInfo.name}, {
+    tvgId: props.channelInfo.tvgId,
+    epgList: props.epgList,
+    channelInfo: props.channelInfo
+  })
 }
 
 function setFavorite(item) {
