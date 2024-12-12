@@ -1,6 +1,9 @@
 import {defineStore} from "pinia";
 import {BaseDirectory, exists, readFile, readDir, readTextFile, writeTextFile} from "@tauri-apps/plugin-fs";
 import {Parser} from 'm3u8-parser';
+import useSettingStore from "@/store/modules/setting.js";
+import {ElMessage, ElNotification} from "element-plus";
+import {downloadFile} from "@/utils/file.js";
 
 
 const useM3uStore = defineStore('m3u', {
@@ -52,37 +55,34 @@ const useM3uStore = defineStore('m3u', {
                 }
             })
         },
+        reloadM3uFiles() {
+            let settingStore = useSettingStore();
+            // ElNotification({
+            //     title: `准备更新M3u文件，共${settingStore.m3uUrlList.length}个`,
+            //     message: '请稍等...',
+            // })
+            settingStore.m3uUrlList.forEach(item => {
+                downloadFile(item.url, 'm3u', `${item.name}.m3u`).then(res => {
+                    // ElMessage({
+                    //     message: res.message,
+                    //     type: res.code
+                    // });
+                })
+            })
+        },
         async addCustomM3uItem(data) {
-            let {tvgId, uri, tvgLogo} = data;
-
-            let existsFile = await exists('m3u/iptv-custom-m3u.m3u', {baseDir: BaseDirectory.Resource});
-            let m3uList = "";
-            if (existsFile) {
-                m3uList += await readTextFile('m3u/iptv-custom-m3u.m3u', {baseDir: BaseDirectory.Resource});
-                m3uList += "\n";
-            }
-            m3uList += `#EXTINF:-1 tvg-id="${tvgId}" kaze-id="${new Date().getTime()}" tvg-name="${tvgId}" ${tvgLogo ? `tvg-logo="${tvgLogo}"` : ""},${tvgId}
-                    ${uri}`;
-            await writeTextFile('m3u/iptv-custom-m3u.m3u', m3uList, {baseDir: BaseDirectory.Resource});
+            let settingStore = useSettingStore();
+            settingStore.customM3uList.push(data);
+            await settingStore.setSetting({customM3uList: settingStore.customM3uList});
         },
         async removeCustomM3uItem(kazeId) {
-            let list = await this.getCustomM3uList();
-            list = list.filter(x => x.kazeId !== kazeId);
-            let m3uList = "";
-            list.forEach(x => {
-                m3uList += `#EXTINF:-1 tvg-id="${x.tvgId}" kaze-id="${x.kazeId}" tvg-name="${x.tvgName}" ${x.tvgLogo ? `tvg-logo="${x.tvgLogo}"` : ""},${x.tvgId}
-                    ${x.uri}`;
-            });
-            await writeTextFile('m3u/iptv-custom-m3u.m3u', m3uList, {baseDir: BaseDirectory.Resource});
+            let settingStore = useSettingStore();
+            settingStore.customM3uList = settingStore.customM3uList.filter(x => x.kazeId !== kazeId)
+            await settingStore.setSetting({customM3uList: settingStore.customM3uList});
         },
         async getCustomM3uList() {
-            let existsFile = await exists('m3u/iptv-custom-m3u.m3u', {baseDir: BaseDirectory.Resource});
-            if (existsFile) {
-                let m3uFileText = await readTextFile('m3u/iptv-custom-m3u.m3u', {baseDir: BaseDirectory.Resource})
-                return this.parseM3U8Text(m3uFileText, 'iptv-custom-m3u.m3u')
-            } else {
-                return [];
-            }
+            let settingStore = useSettingStore();
+            return settingStore.customM3uList ?? [];
         },
     },
 })

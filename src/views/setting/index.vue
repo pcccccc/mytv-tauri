@@ -21,7 +21,7 @@
                      @click="settingReactive.downloadUrl(item,'m3u')">刷新
           </el-button>
           <el-button size="small" type="danger"
-                     @click="settingReactive.deleteItem(index, settingReactive.m3uUrlList)">删除
+                     @click="settingReactive.deleteItem(index, settingReactive.m3uUrlList,'m3u')">删除
           </el-button>
         </div>
       </div>
@@ -70,7 +70,7 @@
                      @click="settingReactive.downloadUrl(item,'epg')">刷新
           </el-button>
           <el-button size="small" type="danger"
-                     @click="settingReactive.deleteItem(index, settingReactive.epgUrlList)">删除
+                     @click="settingReactive.deleteItem(index, settingReactive.epgUrlList,'epg')">删除
           </el-button>
         </div>
       </div>
@@ -81,7 +81,7 @@
 <script setup>
 import {ref, onMounted, reactive} from 'vue';
 import useSettingStore from '../../store/modules/setting.js';
-import {downloadFile} from '@/utils/download.js';
+import {downloadFile, removeFile} from '@/utils/file.js';
 import {ElMessage} from 'element-plus';
 import router from '@/router/index.js';
 import useM3uStore from "@/store/modules/m3u.js";
@@ -106,9 +106,9 @@ const settingReactive = reactive({
   },
   addItemList(type) {
     const isM3u = type === 'M3U';
-    const nameValue = isM3u ? this.m3uNameValue : this.epgNameValue;
-    const inputValue = isM3u ? this.m3uInputValue : this.epgInputValue;
-    const urlList = isM3u ? this.m3uUrlList : this.epgUrlList;
+    const nameValue = isM3u ? settingReactive.m3uNameValue : settingReactive.epgNameValue;
+    const inputValue = isM3u ? settingReactive.m3uInputValue : settingReactive.epgInputValue;
+    const urlList = isM3u ? settingReactive.m3uUrlList : settingReactive.epgUrlList;
 
     // 检查名称和 URL 是否为空
     if (!nameValue || !inputValue) {
@@ -136,30 +136,28 @@ const settingReactive = reactive({
       return;
     }
 
-
     // 添加到列表
     urlList.push({name: nameValue, url: inputValue});
-
     // 下载并保存
-    this.downloadUrl(inputValue, isM3u ? 'm3u' : 'epg', `${nameValue}.${isM3u ? 'm3u' : 'xml'}`)
+    settingReactive.downloadUrl(inputValue, isM3u ? 'm3u' : 'epg', `${nameValue}.${isM3u ? 'm3u' : 'xml'}`)
         .then(() => {
           // 清空输入
           if (isM3u) {
-            this.m3uInputValue = null;
-            this.m3uNameValue = null;
+            settingReactive.m3uInputValue = null;
+            settingReactive.m3uNameValue = null;
           } else {
-            this.epgInputValue = null;
-            this.epgNameValue = null;
+            settingReactive.epgInputValue = null;
+            settingReactive.epgNameValue = null;
           }
 
           // 保存数据
-          this.saveData();
+          settingReactive.saveData();
         });
   },
   // 删除项目
-  deleteItem(index, list) {
+  deleteItem(index, list, type) {
     if (list !== null && list.length > 0) {
-      // todo 删除同名文件
+      removeFile(type, `${list[index].name}.${type == 'm3u' ? 'm3u' : 'xml'}`);
       list.splice(index, 1);
       settingReactive.saveData();
     }
@@ -177,7 +175,7 @@ const settingReactive = reactive({
   async getData() {
     settingReactive.m3uUrlList = settingStore.m3uUrlList;
     settingReactive.epgUrlList = settingStore.epgUrlList;
-    settingReactive.m3uCustomList = settingStore.epgUrlList;
+    settingReactive.m3uCustomList = settingStore.m3uCustomList;
   },
   m3uCustomList: [],
   addTvgObj: {},

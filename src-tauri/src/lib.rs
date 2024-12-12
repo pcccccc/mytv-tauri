@@ -6,40 +6,6 @@ mod command;
 // use crate::command::{create_window, execute_js};
 use tauri::{generate_context, generate_handler, Builder, Manager, Window, WindowEvent};
 
-// 窗口事件处理函数
-// 该函数用于处理窗口的各种事件，如关闭请求等
-// 参数:
-// - app: &Window 类型的引用，代表当前应用的窗口
-// - event: &WindowEvent 类型的引用，代表发生的窗口事件
-fn window_event_handler(app: &Window, event: &WindowEvent) {
-    match event {
-        // 处理窗口关闭请求事件
-        WindowEvent::CloseRequested { api, .. } => {
-            // 阻止窗口直接关闭，以便进行自定义处理
-            api.prevent_close();
-            // 检查当前窗口是否为主窗口
-            if app.label() == "Main" {
-                // 子窗口 label 的数组
-                const SUB_WINDOW_LABELS: [&str; 1] = ["sub_window"];
-                // 遍历子窗口数组，尝试关闭所有子窗口
-                for label in SUB_WINDOW_LABELS.iter() {
-                    // 获取子窗口
-                    let sub = app.get_webview_window(label);
-                    // 如果子窗口存在，则销毁它
-                    if sub.is_some() {
-                        sub.unwrap().destroy().unwrap();
-                    }
-                }
-            }
-            // 销毁当前窗口
-            app.destroy().unwrap();
-        }
-        // 其他事件类型暂不处理
-        _ => {}
-    }
-}
-
-
 // 定义应用程序的入口函数
 pub fn run() {
     // 初始化应用程序构建器

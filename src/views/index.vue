@@ -1,6 +1,6 @@
 <template>
   <div class="main flex flex-col items-center w-full overflow-auto gap-5 p-3 mt-3">
-    <div class="text-4xl">悦视</div>
+    <div class="text-4xl">我的电视</div>
     <div class="flex gap-3">
       <el-button @click="toChannels">频道</el-button>
       <el-button @click="toSetting">设置</el-button>
@@ -20,7 +20,6 @@
 
 <script setup name="main">
 import router from "../router/index.js";
-import EpgList from "@/components/epgItem.vue";
 import {computed, onMounted, onUnmounted, reactive} from "vue";
 import useM3uStore from "@/store/modules/m3u.js";
 import useEPGStore from "@/store/modules/epg.js";
@@ -51,8 +50,8 @@ const indexReactive = reactive({
   epgList: [],
   m3uList: [],
   async init() {
-    await epgStore.getEPGList();
-    await m3uStore.getM3uList();
+    // await epgStore.getEPGList();
+    // await m3uStore.getM3uList();
     indexReactive.m3uList = m3uStore.m3uList.filter(x => settingStore.favoriteList.some(y => y === x.tvgId));
   }
 })

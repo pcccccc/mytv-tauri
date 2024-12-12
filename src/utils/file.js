@@ -1,4 +1,4 @@
-import {BaseDirectory, writeFile, exists, mkdir, readDir, readTextFile} from "@tauri-apps/plugin-fs";
+import {BaseDirectory, writeFile, exists, mkdir, readDir, readTextFile, remove} from "@tauri-apps/plugin-fs";
 import {fetch} from "@tauri-apps/plugin-http";
 
 export async function downloadFile(downloadUrl, downloadPath = "download", fileName) {
@@ -30,3 +30,11 @@ export async function downloadFile(downloadUrl, downloadPath = "download", fileN
     }
 }
 
+export async function removeFile(downloadPath = "download", fileName) {
+    try {
+        await remove(`${downloadPath}/${fileName}`, {baseDir: BaseDirectory.Resource});
+        return {code: 'success', message: `删除成功：${fileName}`}
+    } catch (error) {
+        return {code: 'error', message: `删除时出错:, ${JSON.stringify(error)}`}
+    }
+}

@@ -2,6 +2,9 @@ import {defineStore} from 'pinia';
 import {BaseDirectory, exists, readFile, readDir, readTextFile} from '@tauri-apps/plugin-fs';
 import parser from 'epg-parser';
 import {formatTimeByFormat} from '@/utils/time.js';
+import {ElMessage, ElNotification} from "element-plus";
+import {downloadFile} from "@/utils/file.js";
+import useSettingStore from "@/store/modules/setting.js";
 
 
 const useEPGStore = defineStore('epg', {
@@ -59,6 +62,22 @@ const useEPGStore = defineStore('epg', {
                     validChannelIds.has(program.channel)
                 );
             }
+        },
+        // 重新下载全部的文件
+        reloadEpgFiles() {
+            let settingStore = useSettingStore();
+            // ElNotification({
+            //     title: `准备更新EPG文件，共${settingStore.epgUrlList.length}个`,
+            //     message: '请稍等...',
+            // })
+            settingStore.epgUrlList.forEach(item => {
+                downloadFile(item.url, 'epg', `${item.name}.xml`).then(res => {
+                    // ElMessage({
+                    //     message: res.message,
+                    //     type: res.code
+                    // });
+                })
+            })
         },
         parseEPGText(xml) {
             return parser.parse(xml);

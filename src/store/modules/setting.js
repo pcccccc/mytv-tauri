@@ -1,12 +1,10 @@
 import {defineStore} from "pinia";
 import {exists, BaseDirectory, readTextFile, writeTextFile} from '@tauri-apps/plugin-fs';
 import Config from "../../../public/config.json"
-import {downloadFile} from "@/utils/download.js";
-import {ElMessage, ElNotification} from "element-plus";
 
 const useSettingStore = defineStore('setting', {
     state: () => ({
-        settingFileName: "setting.json"
+        settingFileName: "setting.json",
     }),
     actions: {
         setConfigJs() {
@@ -39,25 +37,29 @@ const useSettingStore = defineStore('setting', {
                     this[key] = json[key];
                 });
             } else {
-                let updateTime = new Date();
-                await writeTextFile(this.settingFileName, JSON.stringify({updateTime}), {baseDir: BaseDirectory.Resource});
-                this["updateTime"] = updateTime
+                await this.initSetting()
             }
         },
-        // 重新下载全部的文件
-        reloadEpgFiles() {
-            ElNotification({
-                title: `准备更新EPG文件，共${this.epgUrlList.length}个`,
-                message: '请稍等...',
-            })
-            this.epgUrlList.forEach(item => {
-                downloadFile(item.url, 'epg', `${item.name}.epg`).then(res => {
-                    ElMessage({
-                        message: res.message,
-                        type: res.code
-                    });
-                })
-            })
+        async initSetting() {
+            // 初始化配置文件
+            let updateTime = new Date();
+            let initData = {
+                updateTime,
+                customM3uList: [],
+                favoriteList:[],
+                m3uUrlList: [{
+                    "name": "我的推荐",
+                    "url": this['IPTV_SOURCE_URL']
+                }],
+                epgUrlList: [{
+                    "name": "我的推荐",
+                    "url": this['EPG_XML_URL']
+                }]
+            }
+            await writeTextFile(this.settingFileName, JSON.stringify(initData,null, 2), {baseDir: BaseDirectory.Resource});
+            Object.keys(initData).forEach(key => {
+                this[key] = initData[key];
+            });
         }
     },
 })

@@ -11,20 +11,20 @@
                    inline-prompt
                    width="100"
                    @change="channels.changeShowFavorite"
-                   v-model="settingStore.showFavorite"></el-switch>
+                   v-model="settingStore.showFavorite"/>
         <el-switch active-text="按文件分组"
                    inactive-text="不分组"
                    inline-prompt
                    width="100"
                    @change="channels.changeGroupByFile"
-                   v-model="settingStore.isGroupByFile"></el-switch>
+                   v-model="settingStore.isGroupByFile"/>
       </div>
     </div>
     <el-tabs v-if="settingStore.isGroupByFile"
              v-model="channels.checkGroup"
              @tab-change="channels.changeShowList"
              type="card">
-      <el-tab-pane v-for="item in channels.groupFileNameList" :label="item" :name="item"></el-tab-pane>
+      <el-tab-pane v-for="item in channels.groupFileNameList" :label="item" :name="item"/>
     </el-tabs>
     <div class="tv-tag-area grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5 "
          :class="{'group':settingStore.isGroupByFile}"
@@ -32,7 +32,7 @@
       <channel-item :channel-info="item"
                     :key="item.tvgId"
                     v-for="item in m3uInfo.showList"
-                    :epg-list="epgStore.findPrograms(item.tvgId)"></channel-item>
+                    :epg-list="epgStore.findPrograms(item.tvgId)"/>
     </div>
   </div>
 </template>
@@ -62,7 +62,7 @@ const channels = reactive({
     return epgStore.findPrograms(name);
   },
   getFavorite() {
-    settingStore.favoriteList = settingStore.favoriteList || [];
+    return settingStore.favoriteList;
   },
   changeShowFavorite() {
     settingStore.setSetting({showFavorite: settingStore.showFavorite});

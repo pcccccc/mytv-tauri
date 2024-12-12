@@ -1,5 +1,7 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 import useSettingStore from "@/store/modules/setting.js";
+import useEPGStore from "@/store/modules/epg.js";
+import useM3uStore from "@/store/modules/m3u.js";
 
 /**
  * Note: 路由配置项
@@ -70,12 +72,6 @@ const router = createRouter({
 
 // 全局路由监听
 router.beforeEach(async (to, from, next) => {
-    // if(to.fullPath === '/index'){
-    useSettingStore().setConfigJs();
-    await useSettingStore().getSetting();
-    // useSettingStore().reloadEpgFiles();
-    // }
-    // 可以在这里进行一些全局的路由处理
     next()
 })
 
