@@ -23,7 +23,7 @@
   </div>
 </template>
 <script setup>
-import EpgList from "@/components/epgItem.vue";
+import EpgList from "@/components/Channel/epgItem.vue";
 import {openNewPlayerWindow} from "@/utils/window.js";
 import useSettingStore from "@/store/modules/setting.js";
 

@@ -81,8 +81,8 @@ import {formatSeconds, formatTimeByFormat, getWeekDay} from "@/utils/time.js";
 import {determineIPType} from "@/utils/index.js";
 import {load} from "@tauri-apps/plugin-store";
 import {useRoute} from "vue-router";
-import Timeline from "@/views/play/timeline.vue";
-import VideoPlayer from "@/views/play/videoPlayer.vue";
+import Timeline from "@/views/player/timeline.vue";
+import VideoPlayer from "@/views/player/videoPlayer.vue";
 
 const {proxy} = getCurrentInstance();
 

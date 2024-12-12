@@ -1,9 +1,8 @@
 <template>
   <div class="p-3">
-    <div class="flex justify-between align-middle">
-      <div class="text-2xl">电视列表</div>
-      <el-button title="回到首页" @click="router.back()"><i class="fa-solid fa-arrow-left"></i></el-button>
-    </div>
+    <kaze-header title="电视列表"
+                 sub-title="这是订阅地址所展示的频道列表，可能由于地址过期或您的网络处于IPv4等，无法正常播放。"
+                 @back="router.back()"></kaze-header>
     <div v-loading="channels.loading" element-loading-text="正在加载频道列表...">
       <div class="flex gap-3">
         <el-switch active-text="只显示收藏"
@@ -29,10 +28,10 @@
     <div class="tv-tag-area grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5 "
          :class="{'group':settingStore.isGroupByFile}"
     >
-      <channel-item :channel-info="item"
-                    :key="item.tvgId"
-                    v-for="item in m3uInfo.showList"
-                    :epg-list="epgStore.findPrograms(item.tvgId)"/>
+      <item :channel-info="item"
+            :key="item.tvgId"
+            v-for="item in m3uInfo.showList"
+            :epg-list="epgStore.findPrograms(item.tvgId)"/>
     </div>
   </div>
 </template>
@@ -42,10 +41,11 @@ import useEPGStore from '@/store/modules/epg.js';
 import useM3uStore from '@/store/modules/m3u.js';
 import {computed, nextTick, onMounted, reactive} from 'vue';
 import router from '@/router/index.js';
-import EpgList from '@/components/epgItem.vue';
+import EpgList from '@/components/Channel/epgItem.vue';
 import useSettingStore from "@/store/modules/setting.js";
-import {openNewPlayerWindow, openNewWindow} from "@/utils/window.js";
-import ChannelItem from "@/components/channelItem.vue";
+import Item from "@/components/Channel/item.vue";
+import KazeHeader from "@/components/Header/index";
+
 
 const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
 
