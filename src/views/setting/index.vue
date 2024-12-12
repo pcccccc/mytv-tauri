@@ -40,7 +40,8 @@
       <div class="flex flex-col mt-3">
         <div class="flex gap-2 items-center w-100 mt-2" v-for="(item,index) in settingReactive.m3uCustomList">
           <div :title="`${item.tvgId} - ${item.uri}`" class="flex-1 truncate flex items-center">
-            <el-image v-if="item.tvgLogo" :src="item.tvgLogo" fit="scale-down" class="w-[40px] backdrop-brightness-50"></el-image>
+            <el-image v-if="item.tvgLogo" :src="item.tvgLogo" fit="scale-down"
+                      class="w-[40px] backdrop-brightness-50"></el-image>
             <el-tag>{{ item.tvgId }}</el-tag>
             <span class="text-sm ml-3">{{ item.uri }}</span>
           </div>
@@ -163,8 +164,8 @@ const settingReactive = reactive({
       settingReactive.saveData();
     }
   },
-  async downloadUrl(item, type) {
-    let res = await downloadFile(item.url, type, `${item.name}.${type == 'm3u' ? 'm3u' : 'xml'}`);
+  async downloadUrl(item, type, name) {
+    let res = await downloadFile(item.url, type, name ?? `${item.name}.${type == 'm3u' ? 'm3u' : 'xml'}`);
     ElMessage({
       message: res.message,
       type: res.code

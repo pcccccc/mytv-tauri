@@ -36,7 +36,7 @@ const useM3uStore = defineStore('m3u', {
 
                 return {
                     name: titleMatch ? titleMatch[1] : null,
-                    tvgId: tvgIdMatch ? tvgIdMatch[1] : null,
+                    tvgId: tvgIdMatch ? tvgIdMatch[1] : (tvgNameMatch ? tvgNameMatch[1] : null),
                     tvgName: tvgNameMatch ? tvgNameMatch[1] : null,
                     tvgLogo: tvgLogoMatch ? tvgLogoMatch[1] : null,
                     groupTitle: groupTitleMatch ? groupTitleMatch[1] : null,
