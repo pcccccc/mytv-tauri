@@ -18,12 +18,12 @@
       </div>
     </div>
     <div class="tv-tag-epg">
-      <epg-list :epg="epgList" :title="channelInfo.name"></epg-list>
+      <epg :epg="epgList" :title="channelInfo.name"></epg>
     </div>
   </div>
 </template>
 <script setup>
-import EpgList from "@/components/Channel/epgItem.vue";
+import Epg from "@/components/Channel/epg.vue";
 import {openNewPlayerWindow} from "@/utils/window.js";
 import useSettingStore from "@/store/modules/setting.js";
 

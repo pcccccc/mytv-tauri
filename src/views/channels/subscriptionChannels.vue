@@ -28,7 +28,7 @@
     <div class="tv-tag-area grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5 "
          :class="{'group':settingStore.isGroupByFile}"
     >
-      <item :channel-info="item"
+      <subscription-channel-item :channel-info="item"
             :key="item.tvgId"
             v-for="item in m3uInfo.showList"
             :epg-list="epgStore.findPrograms(item.tvgId)"/>
@@ -41,9 +41,9 @@ import useEPGStore from '@/store/modules/epg.js';
 import useM3uStore from '@/store/modules/m3u.js';
 import {computed, nextTick, onMounted, reactive} from 'vue';
 import router from '@/router/index.js';
-import EpgList from '@/components/Channel/epgItem.vue';
+import Epg from '@/components/Channel/epg.vue';
 import useSettingStore from "@/store/modules/setting.js";
-import Item from "@/components/Channel/item.vue";
+import SubscriptionChannelItem from "@/components/Channel/subscriptionChannelItem.vue";
 import KazeHeader from "@/components/Header/index";
 
 

@@ -17,6 +17,6 @@ app.use(ElementPlus)
     // .use(VueVirtualScroller)
     .use(router)
     .use(store);
-await mounted();
+// await mounted();
 app.mount('#app')
 

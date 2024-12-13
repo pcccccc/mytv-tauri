@@ -21,5 +21,5 @@ export async function openNewPlayerWindow(url, windowOpt, data) {
 export async function openNewWindow(url, windowOpt) {
     let windowLabel = `play-${windowOpt.label.replace(/\./g, '')}`;
     // 检测窗口是否存在 存在就让那个窗口置顶
-    new WebviewWindow(windowLabel, {...windowOpt, url})
+    return new WebviewWindow(windowLabel, {...windowOpt, url})
 }
