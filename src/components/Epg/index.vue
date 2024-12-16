@@ -29,8 +29,8 @@
 
 <script setup>
 import {nextTick, onMounted, reactive} from 'vue';
-import {currentAndNextProgram, markProgramStatus} from '@/utils/epg.js';
-import {formatDate} from "@/utils/time.js";
+import {currentAndNextProgram, markProgramStatus} from '@/utils/epgUtils.js';
+import {formatDate} from "@/utils/timeUtils.js";
 
 let props = defineProps(['epg', 'title']);
 let epgReactive = reactive({

@@ -18,22 +18,22 @@ export const constantRoutes = [
     {
         path: '/browserChannels',
         name: 'BrowserChannels',
-        component: () => import('@/views/channels/browserChannels.vue'),
+        component: () => import('@/views/channels/channelsDefault.vue'),
     },
     {
         path: '/browserPlayer',
         name: 'BrowserPlayer',
         component: () => import('@/views/browserPlayer/index.vue'),
-        children: [{
-            path: 'cctv',
-            name: 'CCTV',
-            component: () => import('@/views/browserPlayer/chinaCentralTelevision.vue'),
-        }]
+        // children: [{
+        //     path: 'cctv',
+        //     name: 'CCTV',
+        //     component: () => import('@/views/browserPlayer/chinaCentralTelevision.vue'),
+        // }]
     },
     {
         path: '/channels',
         name: 'Channels',
-        component: () => import('@/views/channels/subscriptionChannels.vue'),
+        component: () => import('@/views/channels/channelsSubscription.vue'),
     },
     {
         path: '/setting',

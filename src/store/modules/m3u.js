@@ -3,7 +3,7 @@ import {BaseDirectory, exists, readFile, readDir, readTextFile, writeTextFile} f
 import {Parser} from 'm3u8-parser';
 import useSettingStore from "@/store/modules/setting.js";
 import {ElMessage, ElNotification} from "element-plus";
-import {downloadFile} from "@/utils/file.js";
+import {downloadFile} from "@/utils/fileUtils.js";
 
 
 const useM3uStore = defineStore('m3u', {
@@ -55,20 +55,13 @@ const useM3uStore = defineStore('m3u', {
                 }
             })
         },
-        reloadM3uFiles() {
+        async reloadM3uFiles() {
             let settingStore = useSettingStore();
-            // ElNotification({
-            //     title: `准备更新M3u文件，共${settingStore.m3uUrlList.length}个`,
-            //     message: '请稍等...',
-            // })
-            settingStore.m3uUrlList.forEach(item => {
-                downloadFile(item.url, 'm3u', `${item.name}.m3u`).then(res => {
-                    // ElMessage({
-                    //     message: res.message,
-                    //     type: res.code
-                    // });
-                })
-            })
+            const downloadPromises = settingStore.m3uUrlList.map(async (item) => {
+                await downloadFile(item.url, 'm3u', `${item.name}.m3u`);
+            });
+            await Promise.all(downloadPromises);
+            await settingStore.setSetting({ lastDownloadM3uTime: new Date() });
         },
         async addCustomM3uItem(data) {
             let settingStore = useSettingStore();

@@ -81,7 +81,7 @@
 <script setup>
 import {ref, onMounted, reactive} from 'vue';
 import useSettingStore from '../../store/modules/setting.js';
-import {downloadFile, removeFile} from '@/utils/file.js';
+import {downloadFile, removeFile} from '@/utils/fileUtils.js';
 import {ElMessage} from 'element-plus';
 import router from '@/router/index.js';
 import useM3uStore from "@/store/modules/m3u.js";

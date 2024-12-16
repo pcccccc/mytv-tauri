@@ -4,7 +4,8 @@
   "description": "enables the default permissions",
   "windows": [
     "main",
-    "play-*"
+    "play-*",
+    "browser-*"
   ],
   "permissions": [
     "fs:default",
@@ -110,6 +111,9 @@
     "core:window:allow-show",
     "core:window:allow-unminimize",
     "core:window:allow-set-fullscreen",
+    "core:event:default",
+    "core:event:allow-emit",
+    "core:event:allow-listen",
     "store:default",
     "store:allow-save",
     "store:allow-get",
@@ -130,5 +134,14 @@
         }
       ]
     }
+  ],
+  "remote": {
+    "urls": [
+      "https://*.cctv.com/*"
+    ]
+  },
+  "platforms": [
+    "windows",
+    "macOS"
   ]
 }

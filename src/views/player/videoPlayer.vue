@@ -5,7 +5,7 @@
 import {onMounted, onUnmounted, reactive, ref} from "vue";
 import Hls from "hls.js";
 import {ElMessage} from "element-plus";
-import {formatSeconds} from "@/utils/time.js";
+import {formatSeconds} from "@/utils/timeUtils.js";
 
 const emit = defineEmits();
 const videoPlayer = ref(null);

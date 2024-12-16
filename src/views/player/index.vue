@@ -5,23 +5,23 @@
          @mouseenter="controls.startHoverState"
          @mousemove="controls.resetTimer"
          @mouseleave="controls.stopHoverState">
-      <video-player v-if="video.checkItem.channelInfo.uri"
+      <video-player v-if="video.checkItem.uri"
                     ref="videoPlayerRef"
-                    v-model="video.checkItem.channelInfo.uri"
+                    v-model="video.checkItem.uri"
                     @update:isPlay="controls.handlePlayChange"
                     @update:playInfo="controls.changePlayInfo"
       ></video-player>
       <div class="video-area-controls absolute top-0 bottom-0 left-0 right-0"
            :class="{ 'hide': !controls.isHovering }"
-           v-if="video.checkItem.channelInfo.name">
+           v-if="video.checkItem.name">
         <div class="controls-top height-[85px] top-0 absolute p-3 flex flex-nowrap justify-between items-center gap-3">
           <div class="flex items-center gap-3">
-            <el-image v-if="video.checkItem.channelInfo.tvgLogo"
-                      :src="video.checkItem.channelInfo.tvgLogo"
+            <el-image v-if="video.checkItem.tvgLogo"
+                      :src="video.checkItem.tvgLogo"
                       class="tv-tag-image p-1 h-[60px] max-w-[90px]"
                       fit="contain">
               <template #error>
-                <div>{{ video.checkItem.channelInfo.name }}</div>
+                <div>{{ video.checkItem.name }}</div>
               </template>
             </el-image>
             <div class="epg w-full min-w-[600px] overflow-auto">
@@ -36,11 +36,11 @@
         <div
             class="controls-bottom text-white absolute bottom-0 height-[300px] p-3 flex flex-nowrap justify-between items-center">
           <div class="flex flex-col items-start">
-            <div class="text-xl truncate max-w-[300px] select-none" :title="video.checkItem.channelInfo.name">
-              {{ video.checkItem.channelInfo.name }}
+            <div class="text-xl truncate max-w-[300px] select-none" :title="video.checkItem.name">
+              {{ video.checkItem.name }}
             </div>
             <div class="text-xs	 ip-type px-1 py-0.5 rounded-md">{{
-                determineIPType(video.checkItem.channelInfo.uri)
+                determineIPType(video.checkItem.uri)
               }}
             </div>
           </div>
@@ -77,8 +77,8 @@
 <script setup>
 import {getCurrentInstance, onMounted, reactive, ref, watch} from 'vue';
 import {getCurrentWindow} from '@tauri-apps/api/window';
-import {formatSeconds, formatTimeByFormat, getWeekDay} from "@/utils/time.js";
-import {determineIPType} from "@/utils/index.js";
+import {formatSeconds, formatTimeByFormat, getWeekDay} from "@/utils/timeUtils.js";
+import {determineIPType} from "@/utils/networkUtils.js";
 import {load} from "@tauri-apps/plugin-store";
 import {useRoute} from "vue-router";
 import Timeline from "@/views/player/timeline.vue";
@@ -135,7 +135,6 @@ const controls = reactive({
 const video = reactive({
   show: true,
   checkItem: {
-    channelInfo: {},
     epgList: []
   },
 });
@@ -167,7 +166,6 @@ watch(() => controls.isHovering, () => {
 
 onMounted(() => {
   init();
-
 });
 </script>
 

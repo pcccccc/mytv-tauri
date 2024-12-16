@@ -47,7 +47,7 @@
 
 <script setup>
 import {ref, computed, watch} from 'vue'
-import {formatDate} from "@/utils/time.js";
+import {formatDate} from "@/utils/timeUtils.js";
 
 // 定义组件接收的属性
 const props = defineProps({

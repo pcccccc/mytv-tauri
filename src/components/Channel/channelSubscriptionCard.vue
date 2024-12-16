@@ -1,13 +1,13 @@
 <template>
   <div :key="channelInfo.tvgId"
-       class="tv-tag h-max text-white flex flex-col rounded-md"
+       class="tv-tag h-max text-white flex flex-col rounded-md relative overflow-hidden"
        @click="checkItem">
-    <div class="flex justify-between items-center gap-3 p-2  cursor-pointer ">
-      <el-image :src="channelInfo.tvgLogo||logoURL" class="tv-tag-image" fit="scale-down">
-        <template #error>
-          <el-image :src="logoURL" class="tv-tag-image" fit="scale-down"></el-image>
-        </template>
-      </el-image>
+    <el-image :src="channelInfo.tvgLogo||logoURL"
+              class="tv-tag-image bottom-[-20px] left-[-20px] w-[100px] opacity-20">
+      <template #error>
+      </template>
+    </el-image>
+    <div class="flex justify-between items-center gap-3 p-2  cursor-pointer">
       <div class="truncate flex-1 justify-start flex items-center" :title="channelInfo.name">{{
           channelInfo.name
         }}
@@ -18,13 +18,13 @@
       </div>
     </div>
     <div class="tv-tag-epg">
-      <epg :epg="epgList" :title="channelInfo.name"></epg>
+      <index :epg="epgList" :title="channelInfo.name"></index>
     </div>
   </div>
 </template>
 <script setup>
-import Epg from "@/components/Channel/epg.vue";
-import {openNewPlayerWindow} from "@/utils/window.js";
+import Index from "@/components/Epg/index.vue";
+import {openNewPlayerWindow} from "@/utils/windowUtils.js";
 import useSettingStore from "@/store/modules/setting.js";
 
 const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
@@ -32,10 +32,9 @@ const props = defineProps(['channelInfo', 'epgList']);
 const settingStore = useSettingStore();
 
 function checkItem() {
-  openNewPlayerWindow("/#/play", {label: props.channelInfo.tvgId, title: props.channelInfo.name}, {
-    tvgId: props.channelInfo.tvgId,
+  openNewPlayerWindow("/#/player", {label: props.channelInfo.tvgId, title: props.channelInfo.name}, {
     epgList: props.epgList,
-    channelInfo: props.channelInfo
+    ...props.channelInfo
   })
 }
 
@@ -51,12 +50,11 @@ function setFavorite(item) {
 <style scoped>
 .tv-tag {
   background: #4C4C4C;
-  min-width: 200px;
+  min-width: 250px;
   transition: all 0.5s;
 
   .tv-tag-image {
-    width: 70px;
-    height: 40px;
+    position: absolute;
   }
 
   .tv-tag-title {

@@ -3,9 +3,8 @@ mod command;
 // 根据平台配置移动入口点
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 
-// use crate::command::{create_window, execute_js};
 use tauri::{generate_context, generate_handler, Builder, Manager, Window, WindowEvent};
-
+use crate::command::{create_browser_window, execute_js};
 // 定义应用程序的入口函数
 pub fn run() {
     // 初始化应用程序构建器
@@ -43,12 +42,12 @@ pub fn run() {
             // 返回结果表示应用程序初始化成功
             Ok(())
         })
-        // .invoke_handler(generate_handler![
-        //   create_window,
-        //   execute_js
-        // ])
+        .invoke_handler(generate_handler![
+          create_browser_window,
+          execute_js
+        ])
         // 运行应用程序
-        .run(tauri::generate_context!())
+        .run(generate_context!())
         // 如果运行中出现错误，则输出错误信息
         .expect("error while running tauri application");
 }

@@ -10,10 +10,10 @@
     <div class="w-4/5">
       <el-divider><i class="fa-solid fa-star text-2xl text-yellow-500"></i></el-divider>
       <div class="w-full grid grid-cols-2 gap-3">
-        <subscription-channel-item :channel-info="item"
+        <channel-subscription-card :channel-info="item"
               :key="item.tvgId"
               v-for="item in showList"
-              :epg-list="epgStore.findPrograms(item.tvgId)"></subscription-channel-item>
+              :epg-list="epgStore.findPrograms(item.tvgId)"></channel-subscription-card>
       </div>
     </div>
   </div>
@@ -25,7 +25,7 @@ import {computed, onMounted, onUnmounted, reactive} from "vue";
 import useM3uStore from "@/store/modules/m3u.js";
 import useEPGStore from "@/store/modules/epg.js";
 import useSettingStore from "@/store/modules/setting.js";
-import SubscriptionChannelItem from "@/components/Channel/subscriptionChannelItem.vue";
+import ChannelSubscriptionCard from "@/components/Channel/channelSubscriptionCard.vue";
 
 import {load} from "@tauri-apps/plugin-store";
 
