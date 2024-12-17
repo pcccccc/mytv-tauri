@@ -2,7 +2,7 @@
   <div class="main flex flex-col items-center w-full overflow-auto gap-5 p-3 mt-3">
     <div class="text-4xl">我的电视</div>
     <div class="flex gap-3">
-      <el-button @click="toBrowserChannels">网页频道</el-button>
+      <el-button @click="tochannelsDefault">网页频道</el-button>
       <el-button @click="toChannels">订阅频道</el-button>
       <el-button @click="toSetting">设置</el-button>
       <el-button @click="toInfo">你点着试试</el-button>
@@ -43,8 +43,8 @@ const toInfo = () => {
   router.push("/info")
 }
 
-const toBrowserChannels = () => {
-  router.push("/browserChannels")
+const tochannelsDefault = () => {
+  router.push("/channelsDefault")
 }
 
 const toChannels = () => {

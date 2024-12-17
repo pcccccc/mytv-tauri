@@ -1,13 +1,13 @@
 <template>
   <div :key="channelInfo.tvgId"
        class="tv-tag h-max text-white flex flex-col rounded-md relative overflow-hidden"
-       @click="checkItem">
+       >
     <el-image :src="channelInfo.tvgLogo||logoURL"
               class="tv-tag-image bottom-[-20px] left-[-20px] w-[100px] opacity-20">
       <template #error>
       </template>
     </el-image>
-    <div class="flex justify-between items-center gap-3 p-2  cursor-pointer">
+    <div class="flex justify-between items-center gap-3 p-2  cursor-pointer" @click="checkItem">
       <div class="truncate flex-1 justify-start flex items-center" :title="channelInfo.name">{{
           channelInfo.name
         }}
@@ -18,12 +18,12 @@
       </div>
     </div>
     <div class="tv-tag-epg">
-      <index :epg="epgList" :title="channelInfo.name"></index>
+      <epg :epg="epgList" :title="channelInfo.name"></epg>
     </div>
   </div>
 </template>
 <script setup>
-import Index from "@/components/Epg/index.vue";
+import Epg from "@/components/Epg/index.vue";
 import {openNewPlayerWindow} from "@/utils/windowUtils.js";
 import useSettingStore from "@/store/modules/setting.js";
 

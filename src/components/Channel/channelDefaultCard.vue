@@ -1,7 +1,14 @@
 <template>
-  <div class="browser-channel-item flex justify-start items-start p-3 text-white relative rounded-md cursor-pointer"
+  <div class="browser-channel-item  p-3 text-white relative rounded-md cursor-pointer"
        @click="openChannel">
-    {{ channelInfo.name }}
+    <div class="flex justify-between items-center">
+      <div class="truncate">
+        {{ channelInfo.name }}
+      </div>
+      <div title="去网站" @click.stop="openUrl">
+        <i class="fa-solid fa-link"></i>
+      </div>
+    </div>
     <el-image class="bottom-[-40px] left-[-20px] w-[200px] opacity-20" :src="channelInfo.logo"/>
   </div>
 </template>
@@ -9,6 +16,7 @@
 <script setup>
 import {openNewBrowserWindow} from "@/utils/windowUtils.js";
 import {listen} from "@tauri-apps/api/event"
+import {openInBrowser} from "@/utils/networkUtils.js";
 
 let props = defineProps(['channelInfo'])
 let emit = defineEmits();
@@ -24,6 +32,10 @@ let openChannel = async () => {
     }
     emit('page:loaded', event.payload.label, channelInfo)
   });
+}
+
+const openUrl = async () => {
+  await openInBrowser(props.channelInfo.url)
 }
 </script>
 

@@ -133,11 +133,13 @@
           "url": "https://**"
         }
       ]
-    }
+    },
+    "shell:allow-execute"
   ],
   "remote": {
     "urls": [
-      "https://*.cctv.com/*"
+      "https://*.cctv.com/*",
+      "https://*.fengshows.com/*"
     ]
   },
   "platforms": [

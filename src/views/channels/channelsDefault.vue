@@ -41,6 +41,7 @@ const handelWindow = reactive({
     });
   },
   fullScenes() {
+
   }
 })
 

@@ -16,8 +16,8 @@ export const constantRoutes = [
         component: () => import('@/views/player/index.vue'),
     },
     {
-        path: '/browserChannels',
-        name: 'BrowserChannels',
+        path: '/channelsDefault',
+        name: 'channelsDefault',
         component: () => import('@/views/channels/channelsDefault.vue'),
     },
     {

@@ -177,6 +177,7 @@ onMounted(() => {
     width: 100%;
     height: calc(100vw / 1.777778);
     overflow: hidden;
+    background: #8c8c8c;
 
     video {
       width: 100%;

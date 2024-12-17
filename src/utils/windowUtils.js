@@ -3,12 +3,10 @@ import {load} from "@tauri-apps/plugin-store";
 import {core} from "@tauri-apps/api";
 
 const windowOptions = {
-    // minWidth: 900,
-    // minHeight: 507,
-    // width: 1280,
-    // height: 720,
-    width: 128,
-    height: 72,
+    minWidth: 900,
+    minHeight: 507,
+    width: 1280,
+    height: 720,
     center: true,
     focus: true,
     visible: true,
@@ -49,6 +47,5 @@ export async function openNewBrowserWindow(channelInfo) {
  * @returns {Promise<unknown>}
  */
 export async function openNewWindow(url, label, windowOpt) {
-    console.log(label, {...windowOpt, url})
     return new WebviewWindow(label, {...windowOpt, url})
 }

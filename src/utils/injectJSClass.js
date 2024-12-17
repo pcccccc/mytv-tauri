@@ -12,9 +12,21 @@ export class InjectJSClass {
 
     baseScript() {
         return `
+        window.browserLabel = '${this.label}';
         ${this.addImport()}
         ${this.addStyle()}
-        ${this.addOverlay()}
+        document.addEventListener('dblclick', function(event) {
+            event.preventDefault();
+            return false;
+        });
+        console.log('初始化${this.label}窗口完成！');
+                window.__TAURI__.event.emit('listen-channel-default-event', {
+                  type:'init',
+                   label:window.browserLabel,
+                  content: '初始化${this.label}窗口完成！'
+                }).catch(e => {
+                  console.log(e)
+                });
         `;
     }
 
@@ -32,17 +44,6 @@ export class InjectJSClass {
         return `
         const style = document.createElement('style');
         style.textContent = \`
-                .page-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    background-color: rgba(0, 0, 0, 0.95);
-                    z-index: 999999999;
-                    pointer-events: none;
-                }
-
                 .control-center {
                     position: fixed;
                     bottom: 0;
@@ -149,28 +150,19 @@ export class InjectJSClass {
             document.body.appendChild(controlCenter);`
     }
 
-    createDOMObserverScript(selector, actionCallback) {
+    createDOMObserverScript(selector, actionCallback, hasBaseScript = true) {
+        let obId = new Date().getTime();
         return `;
-  (function() {
-        window.browserLabel = '${this.label}';
-        const observer = new MutationObserver((mutations, obs) => {
+  (function() { 
+        ${hasBaseScript ? this.baseScript() : ''}  
+        const observer${obId} = new MutationObserver((mutations, obs) => {
             const element = document.querySelector('${selector}');
             if (element) {
                 obs.disconnect();
                 ${actionCallback}
-                ${this.baseScript()}    
-                console.log('初始化${this.label}窗口完成！');
-                window.__TAURI__.event.emit('listen-channel-default-event', {
-                  type:'init',
-                   label:window.browserLabel,
-                  content: '初始化${this.label}窗口完成！'
-                }).catch(e => {
-                  console.log(e)
-                });
             }
         });
-
-        observer.observe(document.documentElement, {
+        observer${obId}.observe(document.documentElement, {
             childList: true,
             subtree: true
         });
@@ -185,6 +177,7 @@ export class InjectJSClass {
                     '#player_pagefullscreen_player',
                     `document.querySelector('#player_pagefullscreen_player').click();
                                   document.querySelector('#pic_in_pic_player').remove();
+                                  document.querySelector('#pic_in_pic_player').hidden = true;
                                   // 默认网页全屏按钮加载完毕 = 全屏按钮加载完毕
                                   let player_fullscreen_player = document.querySelector('#player_fullscreen_player')
                                   player_fullscreen_player.addEventListener('click', (e) => {
@@ -204,12 +197,57 @@ export class InjectJSClass {
                                 }, true); `
                 );
                 break;
-            case "fh-zh":
-                allJs = this.createDOMObserverScript(
-                    '.other-selector',
-                    () => {
-                    }
-                );
+            case "fengshows":
+                if (this.channelInfo.id == 'fh-news') {
+                    allJs = '';
+                } else if (this.channelInfo.id == 'fh-zh') {
+                    allJs = this.createDOMObserverScript(
+                        `.fs-live-banner-cluster-schedule-station[fs-title="中文台"]`,
+                        `document.querySelector('.fs-live-banner-cluster-schedule-station[fs-title="中文台"]').click();`,
+                        false
+                    );
+                } else if (this.channelInfo.id == 'fh-hk') {
+                    allJs = this.createDOMObserverScript(
+                        `.fs-live-banner-cluster-schedule-station[fs-title="香港台"]`,
+                        `document.querySelector('.fs-live-banner-cluster-schedule-station[fs-title="香港台"]').click();`,
+                        false
+                    );
+                }
+                allJs += this.createDOMObserverScript(
+                    '.vjs-controlbar-fullscreen',
+                    `
+                    document.querySelector('.vjs-controlbar-fullscreen').click();
+                    document.querySelector('.vjs-icon-pictureinpicture').style.display = 'none';
+                    document.querySelector('.vjs-controlbar-fullscreen').style.display = 'none';
+
+                    const fullButton = document.createElement('div');
+                    fullButton.className = 'kaze-controlbar-fullscreen vjs-icon-fullscreen';
+                    fullButton.style.fontSize = '20px';
+                    fullButton.title = '全屏'; 
+                    fullButton.setAttribute('isfullscreen', 'false');
+                    document.querySelector('.vjs-controlbar').append(fullButton);
+                    let player_fullscreen_player = document.querySelector('.kaze-controlbar-fullscreen')
+                    player_fullscreen_player.addEventListener('click', (e) => {
+                      e.preventDefault(); 
+                      e.stopPropagation();
+                      const isFullscreen = JSON.parse(player_fullscreen_player.getAttribute('isfullscreen'));
+                      console.log(isFullscreen);
+                      window.__TAURI__.event.emit('listen-channel-default-event', {
+                          label:window.browserLabel,
+                          type: 'full',
+                          isFullscreen
+                      }).then(e=>{
+                      if(isFullscreen){
+                            player_fullscreen_player.classList.remove('vjs-icon-exit-fullscreen')
+                      }else{
+                          player_fullscreen_player.classList.add('vjs-icon-exit-fullscreen')
+                      }
+                          player_fullscreen_player.setAttribute('isfullscreen',!isFullscreen)
+                      }).catch(e => {
+                          console.log('跳转事件出错:', e);
+                      });
+                      });
+                    `)
                 break;
             case "test":
                 console.log('test')
@@ -220,6 +258,7 @@ export class InjectJSClass {
                 `);
                 break;
         }
+        console.log(allJs)
         await invoke('execute_js', {label: this.label, js: allJs});
     }
 }

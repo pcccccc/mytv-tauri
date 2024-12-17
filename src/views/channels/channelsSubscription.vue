@@ -25,7 +25,7 @@
              type="card">
       <el-tab-pane v-for="item in channels.groupFileNameList" :label="item" :name="item"/>
     </el-tabs>
-    <div class="tv-tag-area grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5 "
+    <div class="tv-tag-area grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5 rounded"
          :class="{'group':settingStore.isGroupByFile}"
     >
       <channel-subscription-card :channel-info="item"
@@ -115,7 +115,7 @@ onMounted(async () => {
 
 <style scoped>
 .tv-tag-area {
-  height: calc(100vh - 108px);
+  height: calc(100vh - 128px);
 
   &.group {
     height: calc(100vh - 144px);
