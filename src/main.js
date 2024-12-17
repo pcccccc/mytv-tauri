@@ -10,13 +10,15 @@ import store from "@/store";
 import {mounted} from "@/mounted/index.js";
 import { ElNotification } from 'element-plus'
 
-
 const app = createApp(App);
 
 app.use(ElementPlus)
     // .use(VueVirtualScroller)
     .use(router)
     .use(store);
-await mounted();
-app.mount('#app')
+const initApp = async () => {
+    await mounted();
+    app.mount('#app');
+};
 
+initApp();

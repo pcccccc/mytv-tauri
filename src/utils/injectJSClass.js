@@ -177,7 +177,6 @@ export class InjectJSClass {
                     '#player_pagefullscreen_player',
                     `document.querySelector('#player_pagefullscreen_player').click();
                                   document.querySelector('#pic_in_pic_player').remove();
-                                  document.querySelector('#pic_in_pic_player').hidden = true;
                                   // 默认网页全屏按钮加载完毕 = 全屏按钮加载完毕
                                   let player_fullscreen_player = document.querySelector('#player_fullscreen_player')
                                   player_fullscreen_player.addEventListener('click', (e) => {
@@ -258,7 +257,6 @@ export class InjectJSClass {
                 `);
                 break;
         }
-        console.log(allJs)
         await invoke('execute_js', {label: this.label, js: allJs});
     }
 }
