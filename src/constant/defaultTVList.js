@@ -40,7 +40,7 @@ export const defaultTVList = [
         "url": "https://tv.cctv.com/live/cctv5plus/",
         "group": "CCTV",
         "logo": "https://live.fanmingming.com/tv/CCTV5+.png",
-        "id": 'CCTV5+'
+        "id": 'CCTV5Plus'
     },
     {
         "name": "CCTV-6 电影",

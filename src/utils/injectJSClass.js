@@ -15,10 +15,6 @@ export class InjectJSClass {
         window.browserLabel = '${this.label}';
         ${this.addImport()}
         ${this.addStyle()}
-        document.addEventListener('dblclick', function(event) {
-            event.preventDefault();
-            return false;
-        });
         console.log('初始化${this.label}窗口完成！');
                 window.__TAURI__.event.emit('listen-channel-default-event', {
                   type:'init',
@@ -44,6 +40,8 @@ export class InjectJSClass {
         return `
         const style = document.createElement('style');
         style.textContent = \`
+                video {pointer-events: none;}
+                
                 .control-center {
                     position: fixed;
                     bottom: 0;
