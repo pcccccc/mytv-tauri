@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "MiSans";
-  src: url("@/assets/MiSans VF.ttf")
+    font-family: "MiSans";
+    src: url("@/assets/MiSans VF.ttf")
 }
 
 * {
-  font-family: MiSans;
+    font-family: MiSans;
 }

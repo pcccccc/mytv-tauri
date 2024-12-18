@@ -8,7 +8,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import router from './router/index.js'
 import store from "@/store";
 import {disableDevToolsAndContextMenu, downloadM3uAndEpg, mounted} from "@/mounted/index.js";
-
 const app = createApp(App);
 
 app.use(ElementPlus)
