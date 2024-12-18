@@ -1,6 +1,7 @@
 import {WebviewWindow} from '@tauri-apps/api/webviewWindow'
 import {load} from "@tauri-apps/plugin-store";
 import {core} from "@tauri-apps/api";
+import {open} from '@tauri-apps/plugin-shell';
 
 const defaultOptions = {
     minWidth: 900,
@@ -49,4 +50,9 @@ export async function openNewBrowserWindow(channelInfo) {
  */
 export async function openNewWindow(url, label, windowOption) {
     return new WebviewWindow(label, {...windowOption, url})
+}
+
+
+export function openBrowser(url) {
+    open(url);
 }

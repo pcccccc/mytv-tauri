@@ -134,6 +134,7 @@
         }
       ]
     },
+    "shell:default",
     "shell:allow-execute"
   ],
   "remote": {

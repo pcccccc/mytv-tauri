@@ -7,6 +7,7 @@
                             @page:loaded="pageInject"
                             @handel:fullScenes="handelWindow.fullScenes"></channel-default-card>
     </div>
+    <el-button class="mt-3" @click="addNewTV">有新的电视节目想添加，点这里提交吧！</el-button>
   </div>
 </template>
 
@@ -21,6 +22,8 @@ import ChannelDefaultCard from "@/components/Channel/channelDefaultCard.vue";
 import {InjectJSClass} from "@/utils/injectJSClass.js";
 import {listen} from "@tauri-apps/api/event";
 import {Window} from "@tauri-apps/api/window";
+import {openBrowser} from "@/utils/windowUtils.js";
+
 
 const pageInject = (label, channelInfo) => {
   new InjectJSClass(label, channelInfo)
@@ -44,6 +47,10 @@ const handelWindow = reactive({
 
   }
 })
+
+const addNewTV = () => {
+  openBrowser("https://github.com/KazeLiu/mytv-tauri/issues")
+};
 
 onMounted(() => {
   handelWindow.initListen();

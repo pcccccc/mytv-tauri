@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col items-center p-10">
-    <div class="flex items-center justify-around w-2/5">
+    <div class="flex items-center justify-around flex-col gap-10">
       <div class="flex items-center justify-around gap-3">
         <el-avatar
             :src="avatar"
         />
         <div>KazeLiu</div>
       </div>
-      <div @click="toLink">查看项目</div>
+      <el-button @click="toLink">查看项目</el-button>
     </div>
 
     <div class="mt-10 text-2xl">免责声明</div>
@@ -22,14 +22,15 @@
 </template>
 
 <script setup>
+import {openBrowser} from "@/utils/windowUtils.js";
+
 const avatar = new URL('@/assets/avatar.jpg', import.meta.url);
 import {useRoute, useRouter} from "vue-router";
-import {open} from '@tauri-apps/plugin-shell';
 
 
 const router = useRouter();
 const toLink = () => {
-  open('https://github.com/KazeLiu/mytv-tauri');
+  openBrowser('https://github.com/KazeLiu/mytv-tauri')
 }
 </script>
 

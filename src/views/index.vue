@@ -5,15 +5,15 @@
       <el-button @click="tochannelsDefault">网页频道</el-button>
       <el-button @click="toChannels">订阅频道</el-button>
       <el-button @click="toSetting">设置</el-button>
-      <el-button @click="toInfo">你点着试试</el-button>
+      <el-button @click="toInfo">声明</el-button>
     </div>
     <div class="w-4/5">
       <el-divider><i class="fa-solid fa-star text-2xl text-yellow-500"></i></el-divider>
       <div class="w-full grid grid-cols-2 gap-3">
         <channel-subscription-card :channel-info="item"
-              :key="item.tvgId"
-              v-for="item in showList"
-              :epg-list="epgStore.findPrograms(item.tvgId)"></channel-subscription-card>
+                                   :key="item.tvgId"
+                                   v-for="item in showList"
+                                   :epg-list="epgStore.findPrograms(item.tvgId)"></channel-subscription-card>
       </div>
     </div>
   </div>
