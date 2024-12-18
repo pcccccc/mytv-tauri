@@ -1,11 +1,11 @@
 <template>
   <div class="browser-channel-item  p-3 text-white relative rounded-md cursor-pointer"
-       @click="openChannel">
+       @click="openNewBrowserWindow(channelInfo)">
     <div class="flex justify-between items-center">
       <div class="truncate">
         {{ channelInfo.name }}
       </div>
-      <div title="去网站" @click.stop="openUrl">
+      <div title="去网站" @click.stop="openInBrowser(channelInfo.url)">
         <i class="fa-solid fa-link"></i>
       </div>
     </div>
@@ -20,23 +20,22 @@ import {openInBrowser} from "@/utils/networkUtils.js";
 
 let props = defineProps(['channelInfo'])
 let emit = defineEmits();
+let unListen = ref(null);
 
-let openChannel = async () => {
-  await openNewBrowserWindow(props.channelInfo);
-
-  // 监听页面是否加载完毕
-  await listen('page-loaded-event', async (event) => {
+onMounted(async () => {
+  unListen.value = await listen('page-loaded-event', async (event) => {
     let channelInfo = JSON.parse(event.payload.info);
     if (props.channelInfo.id != channelInfo.id) {
       return;
     }
     emit('page:loaded', event.payload.label, channelInfo)
   });
-}
+})
 
-const openUrl = async () => {
-  await openInBrowser(props.channelInfo.url)
-}
+onUnmounted(() => {
+  if (unListen.value)
+    unListen.value()
+})
 </script>
 
 <style scoped>

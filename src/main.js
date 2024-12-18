@@ -7,8 +7,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 // import VueVirtualScroller from 'vue-virtual-scroller'
 import router from './router/index.js'
 import store from "@/store";
-import {mounted} from "@/mounted/index.js";
-import { ElNotification } from 'element-plus'
+import {downloadM3uAndEpg, mounted} from "@/mounted/index.js";
+import {ElNotification} from 'element-plus'
 
 const app = createApp(App);
 
@@ -21,4 +21,6 @@ const initApp = async () => {
     app.mount('#app');
 };
 
-initApp();
+initApp().then(res => {
+    downloadM3uAndEpg();
+});

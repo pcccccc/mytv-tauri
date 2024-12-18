@@ -33,6 +33,7 @@ reqwest = "0.12.9"
 anyhow = "1.0.93"
 tokio = { version = "1.41.1", features = ["test-util"] }
 tauri-plugin-shell = "2.0.0-rc"
+simple_logger = "5.0.0"
 
 [dependencies.tauri-plugin-sql]
 features = ["sqlite"] # or "postgres", or "mysql"

@@ -7,7 +7,7 @@
         />
         <div>KazeLiu</div>
       </div>
-<!--      <div @click="toLink">查看项目</div>-->
+      <div @click="toLink">查看项目</div>
     </div>
 
     <div class="mt-10 text-2xl">免责声明</div>
@@ -24,12 +24,12 @@
 <script setup>
 const avatar = new URL('@/assets/avatar.jpg', import.meta.url);
 import {useRoute, useRouter} from "vue-router";
-// import { open } from '@tauri-apps/api/shell';
+import {open} from '@tauri-apps/plugin-shell';
 
 
 const router = useRouter();
-const toLink = ()=>{
-  open('https://github.com/KazeLiu/IPTVplayer');
+const toLink = () => {
+  open('https://github.com/KazeLiu/mytv-tauri');
 }
 </script>
 
