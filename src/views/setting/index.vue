@@ -75,6 +75,8 @@
         </div>
       </div>
     </el-card>
+
+    <div class="w-full text-right"><el-button type="success" class="mt-3" @click="addErrorSource">如果有源解析失败或报错，来这里提交！</el-button></div>
   </div>
 </template>
 
@@ -85,6 +87,7 @@ import {downloadFile, removeFile} from '@/utils/fileUtils.js';
 import {ElMessage} from 'element-plus';
 import router from '@/router/index.js';
 import useM3uStore from "@/store/modules/m3u.js";
+import {openBrowser} from "@/utils/windowUtils.js";
 
 const settingStore = useSettingStore();
 const m3uStore = useM3uStore();
@@ -206,8 +209,8 @@ const settingReactive = reactive({
   }
 });
 
-const loadSettings = () => {
-
+const addErrorSource = () => {
+  openBrowser("https://github.com/KazeLiu/mytv-tauri/issues")
 };
 
 onMounted(async () => {

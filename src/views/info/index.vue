@@ -7,7 +7,7 @@
         />
         <div>KazeLiu</div>
       </div>
-      <el-button @click="toLink">查看项目</el-button>
+      <el-button @click="toLink">查看项目，点个Star，一起写代码？🤔</el-button>
     </div>
 
     <div class="mt-10 text-2xl">免责声明</div>

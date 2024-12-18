@@ -1,13 +1,15 @@
 <template>
   <div class="p-3">
     <kaze-header title="网页电视列表"
-                 @back="router.back"></kaze-header>
-    <div class=" grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5  ">
+                 @back="router.back"/>
+    <div class="grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5  ">
       <channel-default-card v-for="item in defaultTVList" :channel-info="item"
                             @page:loaded="pageInject"
                             @handel:fullScenes="handelWindow.fullScenes"></channel-default-card>
     </div>
-    <el-button class="mt-3" @click="addNewTV">有新的电视节目想添加，点这里提交吧！</el-button>
+    <div class="w-full text-right">
+      <el-button type="success" class="mt-3" @click="addNewTV">有新的电视节目想添加，点这里提交吧！</el-button>
+    </div>
   </div>
 </template>
 
