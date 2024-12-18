@@ -170,6 +170,10 @@ const scrollToCurrentProgram = () => {
 watch(() => processedPrograms.value, () => scrollToCurrentProgram())
 
 defineExpose({scrollToCurrentProgram})
+
+onMounted(() => {
+  scrollToCurrentProgram();
+})
 </script>
 
 <style scoped>

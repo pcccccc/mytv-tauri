@@ -7,8 +7,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 // import VueVirtualScroller from 'vue-virtual-scroller'
 import router from './router/index.js'
 import store from "@/store";
-import {downloadM3uAndEpg, mounted} from "@/mounted/index.js";
-import {ElNotification} from 'element-plus'
+import {disableDevToolsAndContextMenu, downloadM3uAndEpg, mounted} from "@/mounted/index.js";
 
 const app = createApp(App);
 
@@ -17,10 +16,11 @@ app.use(ElementPlus)
     .use(router)
     .use(store);
 const initApp = async () => {
+    disableDevToolsAndContextMenu();
     await mounted();
     app.mount('#app');
 };
 
-initApp().then(res => {
-    downloadM3uAndEpg();
+initApp().then(async res => {
+    await downloadM3uAndEpg();
 });

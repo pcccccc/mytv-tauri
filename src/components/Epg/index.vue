@@ -7,10 +7,11 @@
     <div :title="epgReactive.next?.title" class="peg-list-next px-1 py-1 truncate rounded-md p-1">
       即将播放：{{ epgReactive.next?.title || '未解析到节目' }}
     </div>
-    <el-dialog :title="channelInfo.title+' 全部节目'" v-model="epgReactive.isShowAllEpg" align-center destroy-on-close>
+    <el-dialog :title="channelInfo.name +' 全部节目'" v-model="epgReactive.isShowAllEpg" align-center destroy-on-close>
       <div class="flex flex-col gap-3 all-epg-dialog">
-        <div v-for="item in epgReactive.epgList" class="p-3 all-epg-item rounded-md text-white"
-             :class="{'now-playing':item.status == 0}">
+        <div v-for="item in epgReactive.epgList"
+             class="p-3 all-epg-item rounded-md text-white"
+             :class="{'now-playing':item.status == 0,'isPlay':item.status == 0,'isPlayed':item.status == -1,'isNextPlay':item.status == 1}">
           <div class="flex items-center justify-between">
             <el-tag type="warning" v-if="item.status == -1">已播放</el-tag>
             <el-tag type="success" v-if="item.status == 0">播放中</el-tag>
@@ -40,11 +41,9 @@ let props = defineProps(['channelInfo']);
 let epgReactive = reactive({
   now: {},
   next: {},
-  epgList: computed(() => epgStore.findPrograms(props.channelInfo.tvgId) || []),
+  epgList: computed(() => markProgramStatus(epgStore.findPrograms(props.channelInfo.tvgId) || [])),
   isShowAllEpg: false,
   showAllEpg(e) {
-    e.stopPropagation()
-    epgReactive.epgList = markProgramStatus(props.epg);
     epgReactive.isShowAllEpg = true;
     nextTick(() => {
       const nowPlayingElement = document.querySelector('.now-playing');
@@ -77,7 +76,13 @@ onMounted(() => {
     overflow: auto;
 
     .all-epg-item {
-      background: #808080;
+      &.isPlay {
+        background: #2ECC71;
+      }
+
+      &.isPlayed, &.isNextPlay {
+        background: #3498db;
+      }
     }
   }
 }

@@ -93,9 +93,9 @@ const hlsReactive = reactive({
   // 更新缓冲区信息的方法
   updateBufferInfo() {
     if (videoPlayer.value) {
-      return videoPlayer.value.duration;
+      return videoPlayer.value.duration || 0;
     }
-    return '尚未缓冲'
+    return 0
   },
   // 更新网络信息
   updateNetworkInfo() {
@@ -112,7 +112,6 @@ const hlsReactive = reactive({
   },
 
   loadURL(url) {
-    // url = 'https://sf1-cdn-tos.huoshanstatic.com/obj/media-fe/xgplayer_doc_video/hls/xgplayer-demo.m3u8';
     // 加载 M3U8 文件
     hlsReactive.hls.loadSource(url);
     hlsReactive.hls.attachMedia(videoPlayer.value);

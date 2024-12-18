@@ -16,6 +16,7 @@ const defaultOptions = {
 export async function openNewPlayerWindow(url, windowOption, channelInfo) {
     const store = await load('playInfo.json', {autoSave: true});
     const labelId = `play-${windowOption.label}`;
+    console.log(channelInfo)
     await store.set(labelId, channelInfo)
     return await openNewWindow(url, labelId, {
         ...windowOption,

@@ -25,7 +25,7 @@
               </template>
             </el-image>
             <div class="epg w-full min-w-[600px] overflow-auto">
-              <timeline ref="timelineRef" :epg="video.checkItem.epgList"/>
+              <timeline ref="timelineRef" :epg="controls.epgList"/>
             </div>
           </div>
           <div class="time text-white flex flex-col justify-center items-center tabular-nums">
@@ -83,13 +83,16 @@ import {load} from "@tauri-apps/plugin-store";
 import {useRoute} from "vue-router";
 import Timeline from "@/views/player/timeline.vue";
 import VideoPlayer from "@/views/player/videoPlayer.vue";
+import {markProgramStatus} from "@/utils/epgUtils.js";
+import useEPGStore from "@/store/modules/epg.js";
 
+const epgStore = useEPGStore()
 const {proxy} = getCurrentInstance();
 
 const controls = reactive({
   hoverTimer: null,
   isHovering: false,
-  epgList: [],
+  epgList: computed(() => markProgramStatus(epgStore.findPrograms(video.checkItem?.tvgId) || [])),
   playInfo: {},
   changePlayInfo(info) {
     controls.playInfo = info;
@@ -134,9 +137,7 @@ const controls = reactive({
 })
 const video = reactive({
   show: true,
-  checkItem: {
-    epgList: []
-  },
+  checkItem: {},
 });
 
 const getNowTime = reactive({
@@ -153,10 +154,9 @@ const getNowTime = reactive({
 })
 const route = useRoute();
 
-async function init() {
+async function getCheckItem() {
   const store = await load('playInfo.json', {autoSave: false});
   video.checkItem = await store.get(`${getCurrentWindow().label}`);
-  getNowTime.start();
 }
 
 watch(() => controls.isHovering, () => {
@@ -164,7 +164,8 @@ watch(() => controls.isHovering, () => {
 })
 
 onMounted(() => {
-  init();
+  getCheckItem();
+  getNowTime.start();
 });
 </script>
 

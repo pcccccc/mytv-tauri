@@ -32,10 +32,7 @@ const props = defineProps(['channelInfo']);
 const settingStore = useSettingStore();
 
 function checkItem() {
-  openNewPlayerWindow("/#/player", {label: props.channelInfo.labelId, title: props.channelInfo.name}, {
-    epgList: props.epgList,
-    ...props.channelInfo
-  })
+  openNewPlayerWindow("/#/player", {label: props.channelInfo.labelId, title: props.channelInfo.name}, props.channelInfo)
 }
 
 function setFavorite(item) {
