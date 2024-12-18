@@ -2,7 +2,7 @@ import {WebviewWindow} from '@tauri-apps/api/webviewWindow'
 import {load} from "@tauri-apps/plugin-store";
 import {core} from "@tauri-apps/api";
 
-const windowOptions = {
+const defaultOptions = {
     minWidth: 900,
     minHeight: 507,
     width: 1280,
@@ -13,18 +13,18 @@ const windowOptions = {
     title: 'Kaze Player',
 }
 
-export async function openNewPlayerWindow(url, windowOpt, channelInfo) {
+export async function openNewPlayerWindow(url, windowOption, channelInfo) {
     const store = await load('playInfo.json', {autoSave: true});
-    await store.set(`tvgId-${channelInfo.tvgId}`, channelInfo)
-    url = `${url}?tvgId=${channelInfo.tvgId}`
-    return await openNewWindow(url, `play-${windowOpt.label.replace(/[^a-zA-Z0-9\-\/\:_]/g, '')}`, {
-        ...windowOpt,
-        ...windowOptions
+    const labelId = `play-${windowOption.label}`;
+    await store.set(labelId, channelInfo)
+    return await openNewWindow(url, labelId, {
+        ...windowOption,
+        ...defaultOptions
     });
 }
 
 /**
- * 联系后台的方法来打开新的窗口
+ * 联系后台的方法来打开新的窗口 为了监听page_load信息
  * @param channelInfo 传入的频道信息 信息来源为 browserTVList 数组
  * @returns {Promise<unknown>}
  */
@@ -33,7 +33,7 @@ export async function openNewBrowserWindow(channelInfo) {
         label: `browser-${channelInfo.id}`,
         url: channelInfo.url,
         option: {
-            ...windowOptions,
+            ...defaultOptions,
             title: channelInfo.name + ' —— 本页面展示的是源网站内容，不代表本软件观点',
         },
         info: JSON.stringify(channelInfo)
@@ -46,6 +46,6 @@ export async function openNewBrowserWindow(channelInfo) {
  * @param channelInfo 传入的频道信息 信息来源为 browserTVList 数组
  * @returns {Promise<unknown>}
  */
-export async function openNewWindow(url, label, windowOpt) {
-    return new WebviewWindow(label, {...windowOpt, url})
+export async function openNewWindow(url, label, windowOption) {
+    return new WebviewWindow(label, {...windowOption, url})
 }

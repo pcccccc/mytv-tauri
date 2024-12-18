@@ -1,13 +1,13 @@
 <template>
-  <div class="epg-list flex flex-col text-xs p-1" @click.stop="epgReactive.showAllEpg" v-if="epgReactive.now || epgReactive.next">
+  <div class="epg-list flex flex-col text-xs p-1" @click.stop="epgReactive.showAllEpg"
+       v-if="epgReactive.now || epgReactive.next">
     <div :title="epgReactive.now?.title" class="peg-list-now px-1 py-1 truncate rounded-md p-1">
       正在播放：{{ epgReactive.now?.title || '未解析到节目' }}
     </div>
     <div :title="epgReactive.next?.title" class="peg-list-next px-1 py-1 truncate rounded-md p-1">
       即将播放：{{ epgReactive.next?.title || '未解析到节目' }}
     </div>
-<!--    <div class="w100 text-right cursor-pointer">查看全部节目单</div>-->
-    <el-dialog :title="title+' 全部节目'" v-model="epgReactive.isShowAllEpg" align-center destroy-on-close>
+    <el-dialog :title="channelInfo.title+' 全部节目'" v-model="epgReactive.isShowAllEpg" align-center destroy-on-close>
       <div class="flex flex-col gap-3 all-epg-dialog">
         <div v-for="item in epgReactive.epgList" class="p-3 all-epg-item rounded-md text-white"
              :class="{'now-playing':item.status == 0}">
@@ -31,12 +31,16 @@
 import {nextTick, onMounted, reactive} from 'vue';
 import {currentAndNextProgram, markProgramStatus} from '@/utils/epgUtils.js';
 import {formatDate} from "@/utils/timeUtils.js";
+import useEPGStore from "@/store/modules/epg.js";
 
-let props = defineProps(['epg', 'title']);
+const epgStore = useEPGStore()
+
+let props = defineProps(['channelInfo']);
+
 let epgReactive = reactive({
   now: {},
   next: {},
-  epgList: [],
+  epgList: computed(() => epgStore.findPrograms(props.channelInfo.tvgId) || []),
   isShowAllEpg: false,
   showAllEpg(e) {
     e.stopPropagation()
@@ -50,7 +54,7 @@ let epgReactive = reactive({
     })
   },
   currentAndNextProgram() {
-    let currentAndNextProgramList = currentAndNextProgram(props.epg);
+    let currentAndNextProgramList = currentAndNextProgram(epgReactive.epgList);
     epgReactive.now = currentAndNextProgramList.now;
     epgReactive.next = currentAndNextProgramList.next;
   },

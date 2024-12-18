@@ -154,9 +154,8 @@ const getNowTime = reactive({
 const route = useRoute();
 
 async function init() {
-  let tvgId = route.query.tvgId;
   const store = await load('playInfo.json', {autoSave: false});
-  video.checkItem = await store.get(`tvgId-${tvgId}`);
+  video.checkItem = await store.get(`${getCurrentWindow().label}`);
   getNowTime.start();
 }
 

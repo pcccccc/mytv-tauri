@@ -29,6 +29,16 @@ const useM3uStore = defineStore('m3u', {
             parser.push(m3u8Text);
             parser.end();
 
+            function normalizeTvgId(tvgId) {
+                if (!tvgId) return null;
+                return tvgId
+                    .replace(/\+/g, 'Plus')        // 处理 + 号
+                    .replace(/[&]/g, 'And')        // 处理 & 符号
+                    .replace(/[-]/g, '')           // 删除 - 符号
+                    .replace(/[\s]/g, '')          // 删除空格
+                    .replace(/[^a-zA-Z0-9]/g, ''); // 移除其他特殊字符
+            }
+
             function parseM3ULine(line) {
                 const titleMatch = line.match(/,(.+)$/);
                 const tvgIdMatch = line.match(/tvg-id="([^"]+)"/);
@@ -37,13 +47,16 @@ const useM3uStore = defineStore('m3u', {
                 const groupTitleMatch = line.match(/group-title="([^"]+)"/);
                 const kazeIdMatch = line.match(/kaze-id="([^"]+)"/);
 
+                const tvgId = tvgIdMatch ? tvgIdMatch[1] : (tvgNameMatch ? tvgNameMatch[1] : null);
+
                 return {
                     name: titleMatch ? titleMatch[1] : null,
-                    tvgId: tvgIdMatch ? tvgIdMatch[1] : (tvgNameMatch ? tvgNameMatch[1] : null),
+                    tvgId: tvgId, //  唯一id
                     tvgName: tvgNameMatch ? tvgNameMatch[1] : null,
                     tvgLogo: tvgLogoMatch ? tvgLogoMatch[1] : null,
                     groupTitle: groupTitleMatch ? groupTitleMatch[1] : null,
-                    kazeId: kazeIdMatch ? kazeIdMatch[1] : null,
+                    kazeId: kazeIdMatch ? kazeIdMatch[1] : null, // 这个是给添加单条频道号使用的id
+                    labelId: normalizeTvgId(tvgId), // 这个是给打开窗口时使用的id
                     source: source.replace(/\.[^.]+$/, '')
                 };
             }
@@ -61,7 +74,7 @@ const useM3uStore = defineStore('m3u', {
                 await downloadFile(item.url, 'm3u', `${item.name}.m3u`);
             });
             await Promise.all(downloadPromises);
-            await settingStore.setSetting({ lastDownloadM3uTime: new Date() });
+            await settingStore.setSetting({lastDownloadM3uTime: new Date()});
         },
         async addCustomM3uItem(data) {
             let settingStore = useSettingStore();

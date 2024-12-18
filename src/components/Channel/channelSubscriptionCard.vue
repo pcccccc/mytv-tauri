@@ -13,12 +13,12 @@
         }}
       </div>
       <div class="cursor-pointer" @click.stop="setFavorite(channelInfo)" title="收藏">
-        <i class="fa-solid fa-star" v-if="settingStore.favoriteList.some(x=>x === channelInfo.tvgId)"></i>
+        <i class="fa-solid fa-star" v-if="settingStore.favoriteList.some(x=>x === channelInfo.labelId)"></i>
         <i class="fa-regular fa-star" v-else></i>
       </div>
     </div>
     <div class="tv-tag-epg">
-      <epg :epg="epgList" :title="channelInfo.name"></epg>
+      <epg :channel-info="channelInfo"></epg>
     </div>
   </div>
 </template>
@@ -28,21 +28,21 @@ import {openNewPlayerWindow} from "@/utils/windowUtils.js";
 import useSettingStore from "@/store/modules/setting.js";
 
 const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
-const props = defineProps(['channelInfo', 'epgList']);
+const props = defineProps(['channelInfo']);
 const settingStore = useSettingStore();
 
 function checkItem() {
-  openNewPlayerWindow("/#/player", {label: props.channelInfo.tvgId, title: props.channelInfo.name}, {
+  openNewPlayerWindow("/#/player", {label: props.channelInfo.labelId, title: props.channelInfo.name}, {
     epgList: props.epgList,
     ...props.channelInfo
   })
 }
 
 function setFavorite(item) {
-  if (settingStore.favoriteList.some(x => x === item.tvgId)) {
-    settingStore.favoriteList = settingStore.favoriteList.filter(x => x !== item.tvgId)
+  if (settingStore.favoriteList.some(x => x === item.labelId)) {
+    settingStore.favoriteList = settingStore.favoriteList.filter(x => x !== item.labelId)
   } else {
-    settingStore.favoriteList.push(item.tvgId)
+    settingStore.favoriteList.push(item.labelId)
   }
   settingStore.setSetting({favoriteList: settingStore.favoriteList})
 }

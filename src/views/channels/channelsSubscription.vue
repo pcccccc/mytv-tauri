@@ -28,10 +28,10 @@
     <div class="tv-tag-area grid grid-cols-3 auto-rows-min gap-3 overflow-auto w-full mt-5 rounded"
          :class="{'group':settingStore.isGroupByFile}"
     >
-      <channel-subscription-card :channel-info="item"
-            :key="item.tvgId"
-            v-for="item in m3uInfo.showList"
-            :epg-list="epgStore.findPrograms(item.tvgId)"/>
+      <channel-subscription-card
+          :channel-info="item"
+          :key="item.tvgId"
+          v-for="item in m3uInfo.showList"/>
     </div>
   </div>
 </template>
@@ -91,7 +91,7 @@ const channels = reactive({
     // channels.loading = true;
     let showList = [];
     if (settingStore.showFavorite) {
-      showList = m3uStore.m3uList.filter(x => settingStore.favoriteList.some(y => y === x.tvgId));
+      showList = m3uStore.m3uList.filter(x => settingStore.favoriteList.some(y => y === x.labelId));
     } else {
       showList = m3uStore.m3uList;
     }

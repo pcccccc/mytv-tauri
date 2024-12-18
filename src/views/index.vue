@@ -32,7 +32,7 @@ import {load} from "@tauri-apps/plugin-store";
 const m3uStore = useM3uStore();
 const epgStore = useEPGStore();
 const settingStore = useSettingStore();
-const showList = computed(() => m3uStore.m3uList.filter(x => settingStore.favoriteList.some(y => y === x.tvgId)))
+const showList = computed(() => m3uStore.m3uList.filter(x => settingStore.favoriteList.some(y => y === x.labelId)))
 
 
 const toSetting = () => {
@@ -57,7 +57,7 @@ const indexReactive = reactive({
   async init() {
     // await epgStore.getEPGList();
     // await m3uStore.getM3uList();
-    indexReactive.m3uList = m3uStore.m3uList.filter(x => settingStore.favoriteList.some(y => y === x.tvgId));
+    indexReactive.m3uList = m3uStore.m3uList.filter(x => settingStore.favoriteList.some(y => y === x.labelId));
   }
 })
 
