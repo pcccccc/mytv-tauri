@@ -5,7 +5,7 @@
       <div class="truncate">
         {{ channelInfo.name }}
       </div>
-      <div title="去网站" @click.stop="openInBrowser(channelInfo.url)">
+      <div title="去网站" @click.stop="openBrowser(channelInfo.url)">
         <i class="fa-solid fa-link"></i>
       </div>
     </div>
@@ -14,9 +14,8 @@
 </template>
 
 <script setup>
-import {openNewBrowserWindow} from "@/utils/windowUtils.js";
+import {openBrowser, openNewBrowserWindow} from "@/utils/windowUtils.js";
 import {listen} from "@tauri-apps/api/event"
-import {openInBrowser} from "@/utils/networkUtils.js";
 
 let props = defineProps(['channelInfo'])
 let emit = defineEmits();

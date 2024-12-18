@@ -29,23 +29,6 @@ export function determineIPType(url) {
     }
 }
 
-/**
- * 使用系统默认浏览器打开URL
- * @param url 要打开的URL地址
- * @returns Promise<void>
- */
-export async function openInBrowser(url){
-    try {
-        // 验证URL格式
-        new URL(url);
-        // 使用系统默认浏览器打开URL
-        await open(url);
-    } catch (error) {
-        console.error('打开浏览器失败:', error);
-        throw new Error(`无法打开URL: ${url}`);
-    }
-}
-
 
 function x(){
     document.querySelector('.vjs-controlbar-fullscreen').click();
