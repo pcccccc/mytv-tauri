@@ -2,7 +2,9 @@
 
 ## 项目简介
 
-这是一个基于 Tauri 2 和 Vue 3 开发的现代化电视流媒体播放器应用。支持通过 M3U 地址和 EPG 地址自动解析和播放直播流。
+**这是它的图标**
+
+一个基于 Tauri 2 和 Vue 3 开发的现代化电视流媒体播放器应用。支持通过 M3U 地址和 EPG 地址自动解析和播放直播流。
 
 ## 截图
 ![QQ20241206-171020.png](readImage%2FQQ20241206-171020.png)
@@ -11,28 +13,23 @@
 ![QQ20241206-171129.png](readImage%2FQQ20241206-171129.png)
 ![QQ20241206-171200.png](readImage%2FQQ20241206-171200.png)
 
-## 使用方法
-1. 自己在网上找 M3u 订阅地址
-2. 自己在网上找 EPG 订阅地址
-3. 点击卡片开始看电视
+## 使用方法 （请重点阅读）
+去[releases](https://github.com/KazeLiu/mytv-tauri/releases)下载
+
+然后放到某个文件夹内，双击打开即可。
+注意：该程序会在程序文件夹下新建两个文件夹和一个设置文件，分别为存放m3u和epg的文件夹。然后一个setting.json。
+所以不要放在桌面跑。
+
+打开后可以看到频道列表，可以点击网页频道或订阅频道。
+
+网页频道是固定的，它是通过解析电视台的官方页面播放，属于稳定的播放源，如果有建议添加的电视台，可以向我提issues。
+
+订阅频道我预置了一个ipv6的订阅源和一个epg的订阅源，点击频道的标题就可以播放，点击频道的节目单可以看全部的节目单。
+
+你可以在设置里面添加新的订阅源和节目单源或者单个频道，但是不保证能解析成功或者能将节目单对应上。
 
 ## 警告
 程序是 alpha 版本，可能存在一些问题，请按流程使用，不要尝试其他的动作（例如卡住了就F5刷新，暂时还没有屏蔽这种按钮）。
-
-## 技术栈
-
-- **前端**: Vue 3, Vite
-- **桌面框架**: Tauri 2
-- **UI 组件**: Element Plus
-- **状态管理**: Pinia
-- **样式**: Tailwind CSS
-
-## 功能特性
-
-- 输入 M3U 地址自动解析频道列表
-- 支持 EPG 节目指南
-- 跨平台桌面应用
-- 响应式设计
 
 ## 预想功能
 
@@ -49,40 +46,6 @@
 - [ ] 界面更好看
 - [ ] IPv6和IPv4的判定
 
-## 开源致谢
-
-感谢以下开源项目和库的贡献：
-
-### 框架和开发工具
-
-- [Tauri](https://tauri.app/) - 使用 Web 前端构建轻量级跨平台桌面应用
-- [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
-- [Vite](https://vitejs.dev/) - 高性能前端构建工具
-- [Pinia](https://pinia.vuejs.org/) - Vue 状态管理库
-
-### UI 和样式
-
-- [Element Plus](https://element-plus.org/) - Vue 3 组件库
-- [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架
-- [Font Awesome](https://fontawesome.com/) - 图标库
-
-### 媒体处理
-
-- [hls.js](https://github.com/video-dev/hls.js) - HLS 流媒体播放库
-- [m3u8-parser](https://github.com/videojs/m3u8-parser) - M3U8 解析工具
-- [epg-parser](https://github.com/freearhey/epg-parser) - EPG 数据解析库
-
-### 网络和数据请求
-
-- [Axios](https://axios-http.com/) - 基于 Promise 的 HTTP 客户端
-- [Reqwest](https://github.com/seanmonstar/reqwest) - Rust HTTP 客户端
-
-### 开发和构建工具
-
-- [Rust](https://www.rust-lang.org/) - 系统编程语言
-- [PostCSS](https://postcss.org/) - CSS 转换工具
-- [Sass](https://sass-lang.com/) - CSS 预处理器
-
 ## 未来贡献者
 
 我们预留了特别的感谢位置，期待未来更多优秀的贡献者加入！
@@ -94,6 +57,30 @@
 - [目棃](https://github.com/BTMuli)
 - [Goodjooy](https://github.com/Goodjooy)
 
+## 致谢
+
+### 默认订阅源
+
+- [台标库](https://github.com/fanmingming/live/)
+- [IPv6订阅源](https://github.com/fanmingming/live/)
+- [节目单订阅源](http://epg.51zmt.top:8000/)
+
+### 工具类
+- [Tauri](https://tauri.app/)
+- [Vite](https://vitejs.dev/)
+- [Pinia](https://pinia.vuejs.org/)
+- [Element Plus](https://element-plus.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Font Awesome](https://fontawesome.com/)
+- [hls.js](https://github.com/video-dev/hls.js)
+- [m3u8-parser](https://github.com/videojs/m3u8-parser)
+- [epg-parser](https://github.com/freearhey/epg-parser)
+- [RustRover](https://www.jetbrains.com/rust/)
+- [Github代理加速](https://ghp.ci/)
+
+## 项目灵感
+- [mytv-android](https://github.com/yaoxieyoulei/mytv-android)
+
 ## 免责声明
 本程序仅供个人学习和研究使用。程序的开发初衷是为帮助开发者学习 Tauri 2 框架，并提升个人技术水平。程序并不意图侵犯任何版权或其他合法权益。如果您在使用过程中发现任何版权问题或侵犯了他人合法权益，请立即停止使用，并告知我们，我们将采取适当的措施。
 
@@ -104,19 +91,6 @@
 ## 许可证
 
 MIT
-
-## 开发
-
-```bash
-# 安装依赖
-npm install
-
-# 开发模式
-npm run dev
-
-# 构建应用
-npm run tauri build
-```
 
 ## 贡献
 
