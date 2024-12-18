@@ -16,7 +16,9 @@ app.use(ElementPlus)
     .use(router)
     .use(store);
 const initApp = async () => {
-    disableDevToolsAndContextMenu();
+    if (import.meta.env.PROD) {
+        disableDevToolsAndContextMenu();
+    }
     await mounted();
     app.mount('#app');
 };
