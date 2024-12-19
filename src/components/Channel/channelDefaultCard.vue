@@ -9,7 +9,7 @@
         <i class="fa-solid fa-link"></i>
       </div>
     </div>
-    <el-image class="bottom-[-40px] left-[-20px] w-[200px] opacity-20" :src="channelInfo.logo"/>
+    <el-image class="bottom-3 right-3 w-[80px] opacity-20" :src="channelInfo.logo"/>
   </div>
 </template>
 

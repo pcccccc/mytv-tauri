@@ -1,9 +1,9 @@
 <template>
   <div :key="channelInfo.tvgId"
        class="tv-tag h-max text-white flex flex-col rounded-md relative overflow-hidden"
-       >
+  >
     <el-image :src="channelInfo.tvgLogo||logoURL"
-              class="tv-tag-image bottom-[-20px] left-[-20px] w-[100px] opacity-20">
+              class="tv-tag-image bottom-3 right-3 w-[80px] opacity-20">
       <template #error>
       </template>
     </el-image>

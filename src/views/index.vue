@@ -13,7 +13,7 @@
         <channel-subscription-card :channel-info="item"
                                    :key="item.tvgId"
                                    v-for="item in showList"
-                                   :epg-list="epgStore.findPrograms(item.tvgId)"></channel-subscription-card>
+        ></channel-subscription-card>
       </div>
     </div>
   </div>
