@@ -47,7 +47,7 @@ import ChannelSubscriptionCard from "@/components/Channel/channelSubscriptionCar
 import KazeHeader from "@/components/Header/index";
 
 
-const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
+const logoURL = new URL('@/assets/logo.png', import.meta.url);
 
 const m3uStore = useM3uStore();
 const epgStore = useEPGStore();

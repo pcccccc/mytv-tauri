@@ -27,7 +27,7 @@ import Epg from "@/components/Epg/index.vue";
 import {openNewPlayerWindow} from "@/utils/windowUtils.js";
 import useSettingStore from "@/store/modules/setting.js";
 
-const logoURL = new URL('@/assets/logo.jpg', import.meta.url);
+const logoURL = new URL('@/assets/logo.png', import.meta.url);
 const props = defineProps(['channelInfo']);
 const settingStore = useSettingStore();
 
