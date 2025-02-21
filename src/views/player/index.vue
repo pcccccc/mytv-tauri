@@ -7,7 +7,6 @@
          @mouseleave="controls.stopHoverState">
       <video-player v-if="video.activeStream.url"
                     ref="videoPlayerRef"
-                    style="opacity: 0.01"
                     v-model="video.activeStream.url"
                     @update:isPlay="controls.handlePlayChange"
                     @update:playInfo="controls.changePlayInfo"
