@@ -1,13 +1,13 @@
 <template>
   <div :key="channelInfo.tvgId"
-       class="tv-tag h-max text-white flex flex-col rounded-md relative overflow-hidden"
+       class="tv-tag h-max text-white flex flex-col rounded-md relative overflow-hidden  p-2 "
   >
-    <el-image :src="channelInfo.tvgLogo||logoURL"
+    <el-image :crossorigin="null" :src="channelInfo.tvgLogo||logoURL"
               class="tv-tag-image bottom-3 right-3 w-[80px] opacity-20">
       <template #error>
       </template>
     </el-image>
-    <div class="flex justify-between items-center gap-3 p-2  cursor-pointer" @click="checkItem">
+    <div class="flex justify-between items-center gap-3 cursor-pointer" @click="checkItem">
       <div class="truncate flex-1 justify-start flex items-center" :title="channelInfo.name">{{
           channelInfo.name
         }}
@@ -17,7 +17,8 @@
         <i class="fa-regular fa-star" v-else></i>
       </div>
     </div>
-    <div class="tv-tag-epg">
+    <div class="flex justify-between items-center cursor-pointer text-xs">共 {{ channelInfo.urlList?.length || 0}} 个源</div>
+    <div class="tv-tag-epg mt-2">
       <epg :channel-info="channelInfo"></epg>
     </div>
   </div>

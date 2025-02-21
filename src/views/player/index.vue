@@ -5,9 +5,10 @@
          @mouseenter="controls.startHoverState"
          @mousemove="controls.resetTimer"
          @mouseleave="controls.stopHoverState">
-      <video-player v-if="video.checkItem.uri"
+      <video-player v-if="video.activeStream.url"
                     ref="videoPlayerRef"
-                    v-model="video.checkItem.uri"
+                    style="opacity: 0.01"
+                    v-model="video.activeStream.url"
                     @update:isPlay="controls.handlePlayChange"
                     @update:playInfo="controls.changePlayInfo"
       ></video-player>
@@ -16,12 +17,13 @@
            v-if="video.checkItem.name">
         <div class="controls-top height-[85px] top-0 absolute p-3 flex flex-nowrap justify-between items-center gap-3">
           <div class="flex items-center gap-3">
-            <el-image v-if="video.checkItem.tvgLogo"
+            <el-image :crossorigin="null"
+                      v-if="video.checkItem.tvgLogo"
                       :src="video.checkItem.tvgLogo"
                       class="tv-tag-image p-1 h-[60px] max-w-[90px]"
                       fit="contain">
               <template #error>
-                <div>{{ video.checkItem.name }}</div>
+                <div></div>
               </template>
             </el-image>
             <div class="epg w-full min-w-[600px] overflow-auto">
@@ -39,9 +41,28 @@
             <div class="text-xl truncate max-w-[300px] select-none" :title="video.checkItem.name">
               {{ video.checkItem.name }}
             </div>
-            <div class="text-xs	 ip-type px-1 py-0.5 rounded-md">{{
-                determineIPType(video.checkItem.uri)
-              }}
+            <div class="flex gap-2">
+              <div class="ip-type text-xs 	px-1 py-0.5 rounded-md ">{{
+                  determineIPType(video.activeStream.url)
+                }}
+              </div>
+              <el-select v-model="video.activeStreamName"
+                         @change="video.changeStream"
+                         style="width:200px"
+                         size="small"
+              >
+                <el-option
+                    v-for="item in video.checkItem.urlList"
+                    :key="item.url"
+                    :label="item.name"
+                    :value="item.url"
+                >
+                  <div class="flex justify-between">
+                    <span style="float: left">{{ item.name }}</span>
+                    <span class="ml-5">9999ms</span>
+                  </div>
+                </el-option>
+              </el-select>
             </div>
           </div>
           <div class="controls-bottom-button flex flex-1 justify-center flex-nowrap gap-5 text-2xl">
@@ -85,6 +106,7 @@ import Timeline from "@/views/player/timeline.vue";
 import VideoPlayer from "@/views/player/videoPlayer.vue";
 import {markProgramStatus} from "@/utils/epgUtils.js";
 import useEPGStore from "@/store/modules/epg.js";
+import useSettingStore from "@/store/modules/setting.js";
 
 const epgStore = useEPGStore()
 const {proxy} = getCurrentInstance();
@@ -138,6 +160,34 @@ const controls = reactive({
 const video = reactive({
   show: true,
   checkItem: {},
+  storeActiveStreamList: [],
+  activeStreamName: null,
+  activeStream: {},
+  changeStream() {
+    video.activeStream = video.checkItem.urlList.find(item => item.url === video.activeStreamName);
+    if (video.storeActiveStreamList?.some(item => item.label == video.checkItem.labelId)) {
+      video.storeActiveStreamList.forEach(item => {
+        if (item.label == video.checkItem.labelId) {
+          item.url = video.activeStreamName
+        }
+      })
+    } else {
+      video.storeActiveStreamList.push({
+        label: video.checkItem.labelId,
+        url: video.activeStreamName
+      })
+    }
+    controls.refresh()
+    // 保存喜好到设置内
+    useSettingStore().setSetting({activeStreamList: video.storeActiveStreamList})
+  },
+  async getCheckItem() {
+    const store = await load('playInfo.json', {autoSave: false});
+    video.checkItem = await store.get(`${getCurrentWindow().label}`);
+    video.storeActiveStreamList = useSettingStore().activeStreamList || []
+    video.activeStreamName = video.storeActiveStreamList.find(x => x.label == video.checkItem.labelId)?.url || video.checkItem.urlList[0].url;
+    video.changeStream();
+  }
 });
 
 const getNowTime = reactive({
@@ -154,17 +204,13 @@ const getNowTime = reactive({
 })
 const route = useRoute();
 
-async function getCheckItem() {
-  const store = await load('playInfo.json', {autoSave: false});
-  video.checkItem = await store.get(`${getCurrentWindow().label}`);
-}
 
 watch(() => controls.isHovering, () => {
   proxy.$refs.timelineRef && proxy.$refs.timelineRef.scrollToCurrentProgram();
 })
 
 onMounted(() => {
-  getCheckItem();
+  video.getCheckItem();
   getNowTime.start();
 });
 </script>
@@ -181,19 +227,20 @@ onMounted(() => {
 
     video {
       width: 100%;
-      //opacity: 0.05;
+    }
+
+    &.hide {
+      .controls-top {
+        top: -85px
+      }
+
+      .controls-bottom {
+        bottom: -75px
+      }
     }
 
     .video-area-controls {
-      &.hide {
-        .controls-top {
-          top: -85px
-        }
 
-        .controls-bottom {
-          bottom: -75px
-        }
-      }
 
       .time {
       }

@@ -1,6 +1,6 @@
 <template>
   <div class="main flex flex-col items-center w-full overflow-auto gap-5 p-3 mt-3">
-    <el-image :src="logo" style="width: 100px;"/>
+    <el-image :crossorigin="null" :src="logo" style="width: 100px;"/>
     <div class="text-4xl">我的电视</div>
     <div class="flex gap-3">
       <el-button @click="tochannelsDefault">网页频道</el-button>

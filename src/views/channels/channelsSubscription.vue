@@ -72,7 +72,9 @@ const channels = reactive({
     settingStore.showFavorite = settingStore.showFavorite || false;
     channels.changeShowList();
   },
-  groupFileNameList: computed(() => new Array(...new Set(m3uStore.m3uList.map(x => x.source)))),
+  groupFileNameList: computed(() => {
+    return [...new Set(m3uStore.m3uList.flatMap(item => item.urlList.map(urlItem => urlItem.source)))]
+  }),
   checkGroup: null,
   changeGroupByFile() {
     settingStore.setSetting({isGroupByFile: settingStore.isGroupByFile})
@@ -96,7 +98,13 @@ const channels = reactive({
       showList = m3uStore.m3uList;
     }
     if (settingStore.isGroupByFile) {
-      showList = showList.filter(x => x.source == channels.checkGroup);
+      // showList = showList.filter(item =>
+      //     item.urlList.some(urlItem => urlItem.source === channels.checkGroup)
+      // );
+      showList = showList.map(item => ({
+        ...item,
+        urlList: item.urlList.filter(urlItem => urlItem.source === channels.checkGroup)
+      })).filter(item => item.urlList.length > 0);
     }
     m3uInfo.showList = showList;
     // nextTick(() => {
@@ -118,7 +126,7 @@ onMounted(async () => {
   height: calc(100vh - 128px);
 
   &.group {
-    height: calc(100vh - 144px);
+    height: calc(100vh - 166px);
     margin-top: 0;
   }
 }

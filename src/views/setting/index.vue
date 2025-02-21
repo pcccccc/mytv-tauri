@@ -40,7 +40,10 @@
       <div class="flex flex-col mt-3">
         <div class="flex gap-2 items-center w-100 mt-2" v-for="(item,index) in settingStore.m3uCustomList">
           <div :title="`${item.tvgId} - ${item.uri}`" class="flex-1 truncate flex items-center">
-            <el-image v-if="item.tvgLogo" :src="item.tvgLogo" fit="scale-down"
+            <el-image :crossorigin="null"
+                      v-if="item.tvgLogo"
+                      :src="item.tvgLogo"
+                      fit="scale-down"
                       class="w-[40px] backdrop-brightness-50"></el-image>
             <el-tag>{{ item.tvgId }}</el-tag>
             <span class="text-sm ml-3">{{ item.uri }}</span>
@@ -162,7 +165,7 @@ const settingReactive = reactive({
   // 删除项目
   async deleteItem(index, list, type) {
     if (list !== null && list.length > 0) {
-      removeFile(type, `${list[index].name}.${type == 'm3u' ? 'm3u' : 'xml'}`);
+      await removeFile(type, `${list[index].name}.${type == 'm3u' ? 'm3u' : 'xml'}`);
       list.splice(index, 1);
       if (type === 'm3u') {
         await m3uStore.getM3uList();

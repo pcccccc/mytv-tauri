@@ -11,6 +11,11 @@ const useM3uStore = defineStore('m3u', {
         m3uList: [],
     }),
     actions: {
+        /**
+         * 检查资源目录下是否存在m3u文件夹
+         * 遍历所有m3u文件并解析内容
+         * 合并解析结果到m3uList状态
+         */
         async getM3uList() {
             let existsFile = await exists('m3u/', {baseDir: BaseDirectory.Resource});
             if (existsFile) {
@@ -24,49 +29,72 @@ const useM3uStore = defineStore('m3u', {
                 this.m3uList = m3uList;
             }
         },
+        /**
+         * 使用m3u8-parser解析文本
+         * 标准化tvg-id格式（处理特殊字符）
+         * 提取频道元数据（名称、logo、分组等）
+         * 返回结构化频道列表
+         */
         parseM3U8Text(m3u8Text, source) {
             const parser = new Parser();
+            let tvList = [];
+            source = source.replace(/\.[^.]+$/, '');
             parser.push(m3u8Text);
             parser.end();
 
             function normalizeTvgId(tvgId) {
                 if (!tvgId) return null;
                 return tvgId
-                    .replace(/\+/g, 'Plus')        // 处理 + 号
-                    .replace(/[&]/g, 'And')        // 处理 & 符号
-                    .replace(/[-]/g, '')           // 删除 - 符号
-                    .replace(/[\s]/g, '')          // 删除空格
-                    .replace(/[^a-zA-Z0-9]/g, ''); // 移除其他特殊字符
+                    .replace(/\+/g, 'Plus') // 处理 + 号
+                    .replace(/[&]/g, 'And') // 处理 & 符号
+                    .replace(/[-]/g, '_')   // 删除 - 符号
+                    .replace(/[\s]/g, '')   // 删除空格
+                    .replace(/[.]/g, '')
             }
 
             function parseM3ULine(line) {
-                const titleMatch = line.match(/,(.+)$/);
+                const name = line.split(',').at(-1);
                 const tvgIdMatch = line.match(/tvg-id="([^"]+)"/);
                 const tvgNameMatch = line.match(/tvg-name="([^"]+)"/);
                 const tvgLogoMatch = line.match(/tvg-logo="([^"]+)"/);
                 const groupTitleMatch = line.match(/group-title="([^"]+)"/);
-                const kazeIdMatch = line.match(/kaze-id="([^"]+)"/);
-
-                const tvgId = tvgIdMatch ? tvgIdMatch[1] : (tvgNameMatch ? tvgNameMatch[1] : null);
 
                 return {
-                    name: titleMatch ? titleMatch[1] : null,
-                    tvgId: tvgId, //  唯一id
+                    name,
+                    tvgId: tvgIdMatch ? tvgIdMatch[1] : name, //  唯一id 可以重复
                     tvgName: tvgNameMatch ? tvgNameMatch[1] : null,
                     tvgLogo: tvgLogoMatch ? tvgLogoMatch[1] : null,
                     groupTitle: groupTitleMatch ? groupTitleMatch[1] : null,
-                    kazeId: kazeIdMatch ? kazeIdMatch[1] : null, // 这个是给添加单条频道号使用的id
-                    labelId: normalizeTvgId(tvgId), // 这个是给打开窗口时使用的id
-                    source: source.replace(/\.[^.]+$/, '')
+                    labelId: `${normalizeTvgId(name)}_${normalizeTvgId(source)}`, // 这个是给打开窗口时使用的id
                 };
+
             }
 
-            return parser.manifest.segments.map(x => {
-                return {
-                    ...x,
-                    ...parseM3ULine(x.title)
+            parser.manifest.segments.forEach(x => {
+                let result = parseM3ULine(x.title);
+                let find = tvList.find(y => y.tvgId.toLowerCase() === result.tvgId.toLowerCase());
+                let name;
+                if (x.uri.includes('$')) {
+                    name = x.uri.split('$').at(-1)
+                }
+                if (find) {
+                    find.urlList.push({
+                        source,
+                        url: x.uri,
+                        name: `线路${find.urlList.length + 1}：${name}`
+                    })
+                } else {
+                    tvList.push({
+                        ...result,
+                        urlList: [{
+                            source,
+                            url: x.uri,
+                            name: `线路1：${name}`
+                        }]
+                    })
                 }
             })
+            return tvList;
         },
         async downloadM3uList() {
             let settingStore = useSettingStore();
