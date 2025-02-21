@@ -10,8 +10,13 @@ export async function downloadFile(downloadUrl, downloadPath = "download", fileN
         if (!isExists) {
             await mkdir(downloadPath, {baseDir: BaseDirectory.Resource})
         }
-        const response = await fetch(url, {method: "GET", connectTimeout: 5000});
-
+        // 检查同名文件是否存在
+        const fullPath = `${downloadPath}/${fileName}`;
+        const isFileExists = await exists(fullPath, {baseDir: BaseDirectory.Resource});
+        if (isFileExists) {
+            fileName = `default-file-name-${new Date().getTime()}`;
+        }
+        const response = await fetch(url, {method: "GET", connectTimeout: 10000});
         if (response.status === 200) {
             // 将文件数据保存到 BaseDirectory.Resource
             const data = await response.text()
