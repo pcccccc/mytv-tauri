@@ -4,6 +4,7 @@ import {Parser} from 'm3u8-parser';
 import useSettingStore from "@/store/modules/setting.js";
 import {ElMessage, ElNotification} from "element-plus";
 import {downloadFile} from "@/utils/fileUtils.js";
+import { readFileUtf8 } from '@/utils/utf8Utils.js';
 
 
 const useM3uStore = defineStore('m3u', {
@@ -17,15 +18,19 @@ const useM3uStore = defineStore('m3u', {
          * 合并解析结果到m3uList状态
          */
         async getM3uList() {
+
             let existsFile = await exists('m3u/', {baseDir: BaseDirectory.Resource});
+
             if (existsFile) {
                 let fileList = await readDir('m3u/', {baseDir: BaseDirectory.Resource});
+                console.log(fileList);
                 fileList = fileList.filter(x => x.isFile)
                 let m3uList = [];
                 for (let i = 0; i < fileList.length; i++) {
-                    let m3uFileText = await readTextFile(`m3u/${fileList[i].name}`, {baseDir: BaseDirectory.Resource})
+                    let m3uFileText = await readFileUtf8(`m3u/${fileList[i].name}`, {baseDir: BaseDirectory.Resource})
                     m3uList.push(...this.parseM3U8Text(m3uFileText, fileList[i].name));
                 }
+
                 this.m3uList = m3uList;
             }
         },

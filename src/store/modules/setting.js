@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 import {exists, BaseDirectory, readTextFile, writeTextFile} from '@tauri-apps/plugin-fs';
 import Config from "../../../public/config.json"
+import { readFileUtf8 } from '@/utils/utf8Utils.js';
 
 const useSettingStore = defineStore('setting', {
     state: () => ({
@@ -13,8 +14,9 @@ const useSettingStore = defineStore('setting', {
             });
         },
         async setSetting(obj) {
-            let data = await readTextFile(this.settingFileName, {baseDir: BaseDirectory.Resource}) || "{}";
+            let data = await readFileUtf8(this.settingFileName, {baseDir: BaseDirectory.Resource}) || "{}";
             let newData = JSON.parse(data);
+
             // 遍历传入的对象，处理可能需要清空的属性
             for (let key in obj) {
                 // 如果传入的值是空数组，则明确将该属性设置为空数组
@@ -31,7 +33,7 @@ const useSettingStore = defineStore('setting', {
         async getSetting() {
             let existsFile = await exists(this.settingFileName, {baseDir: BaseDirectory.Resource});
             if (existsFile) {
-                let settingText = await readTextFile(this.settingFileName, {baseDir: BaseDirectory.Resource});
+                let settingText = await readFileUtf8(this.settingFileName, {baseDir: BaseDirectory.Resource});
                 let json = JSON.parse(settingText);
                 Object.keys(json).forEach(key => {
                     this[key] = json[key];

@@ -135,7 +135,8 @@
       ]
     },
     "shell:default",
-    "shell:allow-execute"
+    "shell:allow-execute",
+    "dialog:default"
   ],
   "remote": {
     "urls": [
@@ -144,6 +145,7 @@
     ]
   },
   "platforms": [
-    "windows"
+    "windows",
+    "macOS"
   ]
 }
