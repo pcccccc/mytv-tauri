@@ -63,12 +63,12 @@ export async function downloadM3uAndEpg() {
 
     // 下载新的m3u文件和epg文件
     if (!(settingStore.lastDownloadEpgTime && new Date(settingStore.lastDownloadEpgTime).toLocaleDateString() === new Date().toLocaleDateString())) {
-        await epgStore.reloadEpgFiles();
+        await epgStore.downloadEpgList();
         await epgStore.getEPGList();
         console.log('下载epg')
     }
     if (!(settingStore.lastDownloadM3uTime && new Date(settingStore.lastDownloadM3uTime).toLocaleDateString() === new Date().toLocaleDateString())) {
-        await m3uStore.reloadM3uFiles();
+        await m3uStore.downloadM3uList();
         await m3uStore.getM3uList();
         console.log('下载m3u')
     }

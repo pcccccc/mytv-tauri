@@ -47,14 +47,8 @@ const useSettingStore = defineStore('setting', {
                 updateTime,
                 customM3uList: [],
                 favoriteList:[],
-                m3uUrlList: [{
-                    "name": "我的推荐",
-                    "url": this['IPTV_SOURCE_URL']
-                }],
-                epgUrlList: [{
-                    "name": "我的推荐",
-                    "url": this['EPG_XML_URL']
-                }]
+                m3uUrlList: [],
+                epgUrlList: []
             }
             await writeTextFile(this.settingFileName, JSON.stringify(initData,null, 2), {baseDir: BaseDirectory.Resource});
             Object.keys(initData).forEach(key => {

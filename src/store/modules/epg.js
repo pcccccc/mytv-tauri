@@ -64,12 +64,13 @@ const useEPGStore = defineStore('epg', {
             }
         },
         // 重新下载全部的文件
-        async reloadEpgFiles() {
+        async downloadEpgList() {
             let settingStore = useSettingStore();
             const downloadPromises = settingStore.epgUrlList.map(async (item) => {
                 await downloadFile(item.url, 'epg', `${item.name}.xml`);
             });
             await Promise.all(downloadPromises);
+            await this.getEPGList();
             await settingStore.setSetting({lastDownloadEpgTime: new Date()});
         },
         parseEPGText(xml) {

@@ -68,12 +68,13 @@ const useM3uStore = defineStore('m3u', {
                 }
             })
         },
-        async reloadM3uFiles() {
+        async downloadM3uList() {
             let settingStore = useSettingStore();
             const downloadPromises = settingStore.m3uUrlList.map(async (item) => {
                 await downloadFile(item.url, 'm3u', `${item.name}.m3u`);
             });
             await Promise.all(downloadPromises);
+            await this.getM3uList();
             await settingStore.setSetting({lastDownloadM3uTime: new Date()});
         },
         async addCustomM3uItem(data) {

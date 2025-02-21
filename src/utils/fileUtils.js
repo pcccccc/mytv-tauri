@@ -5,7 +5,7 @@ export async function downloadFile(downloadUrl, downloadPath = "download", fileN
     try {
         // 定义文件的下载 URL 和保存文件名
         const url = downloadUrl; // 替换为你的文件 URL
-        fileName = fileName || (url.split('/').pop()?.split('?')[0]) || `default-file-name-${new Date().getTime()}`;
+        fileName = fileName || (url.split('/').pop()?.split('?')[0]);
         let isExists = await exists(`${downloadPath}/`, {baseDir: BaseDirectory.Resource})
         if (!isExists) {
             await mkdir(downloadPath, {baseDir: BaseDirectory.Resource})
