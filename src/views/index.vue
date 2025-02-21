@@ -1,5 +1,6 @@
 <template>
   <div class="main flex flex-col items-center w-full overflow-auto gap-5 p-3 mt-3">
+    <el-image :src="logo" style="width: 100px;"/>
     <div class="text-4xl">我的电视</div>
     <div class="flex gap-3">
       <el-button @click="tochannelsDefault">网页频道</el-button>
@@ -26,6 +27,8 @@ import useM3uStore from "@/store/modules/m3u.js";
 import useEPGStore from "@/store/modules/epg.js";
 import useSettingStore from "@/store/modules/setting.js";
 import ChannelSubscriptionCard from "@/components/Channel/channelSubscriptionCard.vue";
+
+const logo = new URL("@/assets/logo.png", import.meta.url);
 
 import {load} from "@tauri-apps/plugin-store";
 
